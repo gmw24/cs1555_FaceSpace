@@ -45,8 +45,8 @@ CREATE TABLE Messages
 	messageId number(10) PRIMARY KEY,
 	senderId number(10) FOREIGN KEY REFERENCES Profiles(userId),
 	subject varchar2(32),
-	text varchar2(100),
-	DateSent TIMESTAMP,
+	messageText varchar2(140),
+	dateSent TIMESTAMP,
 	groupId number(10)
 );
 
