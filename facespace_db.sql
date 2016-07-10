@@ -24,3 +24,18 @@ CREATE TABLE Groups
 	description varchar2(100),
 	membershipLimit number(10)
 );
+
+CREATE TABLE Friendships
+(
+	friendshipId number(10) PRIMARY KEY,
+	senderId number(10) FOREIGN KEY REFERENCES Profiles(userId),
+	receiverId number(10) FOREIGN KEY REFERENCES Profiles(userId),
+	approved number(1),
+	dateEstablished TIMESTAMP NULL
+);
+
+CREATE TABLE Members
+(
+	groupId number(10) FOREIGN KEY REFERENCES Groups(groupId),
+	userId number(10) FOREIGN KEY REFERENCES Profiles(userId)
+);
