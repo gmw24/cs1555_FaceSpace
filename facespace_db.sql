@@ -17,3 +17,10 @@ CREATE TABLE Profiles
 	dobYear 	number(4),	
 	lastLogin TIMESTAMP
 );
+
+CREATE TABLE Groups
+(	groupId number(10) PRIMARY KEY,
+	name varchar2(32),
+	description varchar2(100),
+	membershipLimit number(10)
+);
