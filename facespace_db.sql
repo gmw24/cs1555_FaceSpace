@@ -31,7 +31,7 @@ CREATE TABLE Friendships
 	senderId number(10) FOREIGN KEY REFERENCES Profiles(userId),
 	receiverId number(10) FOREIGN KEY REFERENCES Profiles(userId),
 	approved number(1),
-	dateEstablished TIMESTAMP NULL
+	dateEstablished TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE Members
