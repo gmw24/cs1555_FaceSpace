@@ -45,13 +45,13 @@ CREATE TABLE Messages
 	messageId number(10) PRIMARY KEY,
 	senderId number(10) FOREIGN KEY REFERENCES Profiles(userId),
 	subject varchar2(32),
-	text varchar2(140),
+	text varchar2(100),
 	DateSent TIMESTAMP,
 	groupId number(10)
 );
 
 CREATE TABLE Recipients
 (
-	messageId number(10) PRIMARY KEY,
+	messageId number(10) FOREIGN KEY REFERENCES Messages(messageId),
 	userId number(10) FOREIGN KEY REFERENCES Profiles(userId)
 );
