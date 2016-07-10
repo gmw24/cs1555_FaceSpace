@@ -18,8 +18,8 @@ CREATE TABLE Profiles
 	lastLogin TIMESTAMP,
 	CONSTRAINT unique_email UNIQUE email,
 	CONSTRAINT valid_dobDay CHECK (dobDay BETWEEN 1 and 31),
-	CONSTRAINT valid_dobMonth CHECK (dobDay BETWEEN 1 and 12),
-	CONSTRAINT valid_dobYear CHECK (dobDay BETWEEN 1900 and 2010)
+	CONSTRAINT valid_dobMonth CHECK (dobMonth BETWEEN 1 and 12),
+	CONSTRAINT valid_dobYear CHECK (dobYear BETWEEN 1900 and 2010)
 );
 
 CREATE TABLE Groups
