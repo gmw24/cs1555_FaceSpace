@@ -39,3 +39,19 @@ CREATE TABLE Members
 	groupId number(10) FOREIGN KEY REFERENCES Groups(groupId),
 	userId number(10) FOREIGN KEY REFERENCES Profiles(userId)
 );
+
+CREATE TABLE Messages
+(
+	messageId number(10) PRIMARY KEY,
+	senderId number(10) FOREIGN KEY REFERENCES Profiles(userId),
+	subject varchar2(32),
+	text varchar2(140),
+	DateSent TIMESTAMP,
+	groupId number(10)
+);
+
+CREATE TABLE Recipients
+(
+	messageId number(10) PRIMARY KEY,
+	userId number(10) FOREIGN KEY REFERENCES Profiles(userId)
+);
