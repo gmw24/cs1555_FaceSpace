@@ -11,11 +11,15 @@ CREATE TABLE Profiles
 (	userId number(10) PRIMARY KEY,
 	fname	varchar2(32),
 	lname	varchar2(32),
-	email 	varchar2(32),
-	dobDay 	number(2),
-	dobMonth	number(2),
+	email 	varchar2(32) ,
+	dobMonth 	number(2),
+	dobDay		number(2),
 	dobYear 	number(4),	
-	lastLogin TIMESTAMP
+	lastLogin TIMESTAMP,
+	CONSTRAINT unique_email UNIQUE email,
+	CONSTRAINT valid_dobDay CHECK (dobDay BETWEEN 1 and 31),
+	CONSTRAINT valid_dobMonth CHECK (dobMonth BETWEEN 1 and 12),
+	CONSTRAINT valid_dobYear CHECK (dobYear BETWEEN 1900 and 2010)
 );
 
 CREATE TABLE Groups
