@@ -106,7 +106,7 @@ INSERT INTO Groups VALUES(3, 'LoL', 'League of Legends Players', 25);
 INSERT INTO Groups VALUES(4, 'Rocket League', 'Rocket League Players', 30);
 INSERT INTO Groups VALUES(5, 'SC2', 'Starcraft 2 Players', 15);
 INSERT INTO Groups VALUES(6, 'Battlefield 1', 'Battlefield 1 Players', 20);
-INSERT INTO Groups VALUES(7, 'No Man\'s Sky', 'No Man\'s Sky Players', 25);
+INSERT INTO Groups VALUES(7, 'No Man''s Sky', 'No Man''s Sky Players', 25);
 INSERT INTO Groups VALUES(8, 'COD4', 'Call of Duty 4: Modern Warfare Players', 35);
 INSERT INTO Groups VALUES(9, 'BBB', 'Bingle Bongle Boongle Players', 20);
 INSERT INTO Groups VALUES(10, 'Wonderputt', 'Wonderputt Players', 10);
