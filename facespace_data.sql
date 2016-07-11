@@ -107,7 +107,7 @@ INSERT INTO Groups VALUES(3, 'LoL', 'League of Legends Players', 25);
 INSERT INTO Groups VALUES(4, 'Rocket League', 'Rocket League Players', 30);
 INSERT INTO Groups VALUES(5, 'SC2', 'Starcraft 2 Players', 15);
 INSERT INTO Groups VALUES(6, 'Battlefield 1', 'Battlefield 1 Players', 20);
-INSERT INTO Groups VALUES(7, 'No Man\'s Sky', 'No Man\'s Sky Players', 25);
+INSERT INTO Groups VALUES(7, 'No Man''s Sky', 'No Man''s Sky Players', 25);
 INSERT INTO Groups VALUES(8, 'COD4', 'Call of Duty 4: Modern Warfare Players', 35);
 INSERT INTO Groups VALUES(9, 'BBB', 'Bingle Bongle Boongle Players', 20);
 INSERT INTO Groups VALUES(10, 'Wonderputt', 'Wonderputt Players', 10);
@@ -313,30 +313,30 @@ INSERT INTO Friendships VALUES(198, 98, 100, 1, TIMESTAMP '2015-04-10 07:15:30')
 INSERT INTO Friendships VALUES(199, 99, 69, 0, NULL);
 INSERT INTO Friendships VALUES(200, 100, 69, 1, TIMESTAMP '2015-04-10 07:15:32');
 
-INSERT INTO Messages VALUES(1,8,'Hey','Hi friends',TIMESTAMP '2015-04-13 12:34:27',NULL);
+INSERT INTO Messages VALUES(1,8,'Hey','Hi friends',TIMESTAMP '2015-04-13 12:34:27', 1);
 INSERT INTO Messages VALUES(2,57,'Urgent','How u do dis',TIMESTAMP '2016-01-31 04:14:27',NULL);
 INSERT INTO Messages VALUES(3,14,'I messed up','Can you believe this? I ate a whole tube of toothpaste last night LOL',TIMESTAMP '2015-04-13 12:34:27',NULL);
-INSERT INTO Messages VALUES(4,12,'The bird is the word','Have you not heard?',TIMESTAMP '2015-11-23 21:35:18',NULL);
+INSERT INTO Messages VALUES(4,12,'The bird is the word','Have you not heard?',TIMESTAMP '2015-11-23 21:35:18',2);
 INSERT INTO Messages VALUES(5,100,'Doge','Such words',TIMESTAMP '2015-03-13 08:34:27',NULL);
 INSERT INTO Messages VALUES(6,100,'Doge','Much tedious',TIMESTAMP '2015-03-13 08:35:00',NULL);
-INSERT INTO Messages VALUES(7,100,'Doge','Wow',TIMESTAMP '2015-03-13 
-INSERT INTO Messages VALUES(8,27,'Aw snap','Come to my macaroni party, we'll take a nap',TIMESTAMP '2015-07-21 11:30:00',NULL);
-INSERT INTO Messages VALUES(9,50,'Hey','OH YEAH',TIMESTAMP '2015-04-13 12:34:00',NULL);
+INSERT INTO Messages VALUES(7,100,'Doge','Wow',TIMESTAMP '2015-03-13 08:36:01',NULL);
+INSERT INTO Messages VALUES(8,27,'Aw snap','Come to my macaroni party, we''ll take a nap',TIMESTAMP '2015-07-21 11:30:00',3);
+INSERT INTO Messages VALUES(9,50,'Hey','OH YEAH',TIMESTAMP '2015-04-13 12:34:00',4);
 INSERT INTO Messages VALUES(10,67,'Timmy','I heard he has fairies, bro.',TIMESTAMP '2016-07-09 23:58:23',NULL);
-INSERT INTO Messages VALUES(11,69,'Sup','Can we play soon?',TIMESTAMP '2015-12-24 12:06:27',NULL);
+INSERT INTO Messages VALUES(11,69,'Sup','Can we play soon?',TIMESTAMP '2015-12-24 12:06:27',5);
 INSERT INTO Messages VALUES(12,72,'Amazing','I can''t believe it''s not butter',TIMESTAMP '2015-04-07 11:30:04',NULL);
-INSERT INTO Messages VALUES(13,4,'cs1555 SOS','I''M SO SCARED FOR THIS EXAM',TIMESTAMP '2016-02-27 10:27:00',NULL);
+INSERT INTO Messages VALUES(13,4,'cs1555 SOS','I''M SO SCARED FOR THIS EXAM',TIMESTAMP '2016-02-27 10:27:00',6);
 INSERT INTO Messages VALUES(14,47,'Waiting','Still waiting on your resume',TIMESTAMP '2015-11-27 12:30:00',NULL);
-INSERT INTO Messages VALUES(15,82,'R u serious','Done with ur shenanigans',TIMESTAMP '2015-04-13 12:34:27',NULL);
+INSERT INTO Messages VALUES(15,82,'R u serious','Done with ur shenanigans',TIMESTAMP '2015-04-13 12:34:27',7);
 INSERT INTO Messages VALUES(16,61,'I dont wanna talk','If it aint about money',TIMESTAMP '2016-01-30 21:03:16',NULL);
-INSERT INTO Messages VALUES(17,59,'What''s the deal','Deal or no deal, bro? We need to know',TIMESTAMP '2015-09-13 02:00:23',NULL);
-INSERT INTO Messages VALUES(18,50,'Skool is not cool','My brain hurts',TIMESTAMP '2015-06-13 07:24:18',NULL);
-INSERT INTO Messages VALUES(19,60,'Help','I can''t find my shoes',TIMESTAMP '2016-01-01 12:00:00',NULL);
-INSERT INTO Messages VALUES(20,70,'We need more books','Books are fun, less videogames more books',TIMESTAMP '2015-03-15 07:36:00',NULL);
+INSERT INTO Messages VALUES(17,59,'What''s the deal','Deal or no deal, bro? We need to know',TIMESTAMP '2015-09-13 02:00:23',8);
+INSERT INTO Messages VALUES(18,50,'Skool is not cool','My brain hurts',TIMESTAMP '2015-06-13 07:24:18',9);
+INSERT INTO Messages VALUES(19,60,'Help','I can''t find my shoes',TIMESTAMP '2016-01-01 12:00:00',10);
+INSERT INTO Messages VALUES(20,70,'We need more books','Books are fun, less videogames more books',TIMESTAMP '2015-03-15 07:36:00',10);
 INSERT INTO Messages VALUES(21,80,'Friends','Hi friends',TIMESTAMP '2015-02-18 11:48:15',NULL);
 INSERT INTO Messages VALUES(22,84,'Pls and thx','Tell us your favorite pokemon',TIMESTAMP '2016-07-08 08:00:00',NULL);
 INSERT INTO Messages VALUES(23,10,'YOU IN TROUBLE','MOM KNOWS YOU TOOK THE CAR LAST NIGHT',TIMESTAMP '2015-08-02 12:36:56',NULL);
-INSERT INTO Messages VALUES(24,13,'I hate Mike','Mike stinks',TIMESTAMP '2016-07-10 19:41:00',NULL);
+INSERT INTO Messages VALUES(24,13,'I hate Mike','Mike stinks',TIMESTAMP '2016-07-10 19:41:00',3);
 INSERT INTO Messages VALUES(25,17,'Umm','I''m scared of the dragons in Skyrim',TIMESTAMP '2015-12-30 15:12:00',NULL);
 INSERT INTO Messages VALUES(26,12,'Going fishing','Will not be back to the office today',TIMESTAMP '2016-06-25 03:15:04',NULL);
 INSERT INTO Messages VALUES(27,14,'Hey','We should get to know each other better',TIMESTAMP '2015-11-20 12:34:27',NULL);
@@ -352,14 +352,543 @@ INSERT INTO Messages VALUES(36,40,'Hi','I like potatoes',TIMESTAMP '2016-03-20 1
 INSERT INTO Messages VALUES(37,89,'Hello','Hello, from the other side',TIMESTAMP '2015-08-26 09:00:00',NULL);
 INSERT INTO Messages VALUES(38,11,'Running tomorrow','Yeah but... can we not?',TIMESTAMP '2016-05-23 23:37:49',NULL);
 INSERT INTO Messages VALUES(39,6,'Physics hw','Hi friends',TIMESTAMP '2015-04-13 12:34:27',NULL);
-INSERT INTO Messages VALUES(40,30,'Date tommorow','What is tomorrows date?',TIMESTAMP '2016-03-11 22:31:46',NULL);
-INSERT INTO Messages VALUES(41,37,'Prom?','What is a Prom and why do you want to go?',TIMESTAMP '2015-04-13 17:00:26',NULL);
-INSERT INTO Messages VALUES(42,36,'Need writing supplies','We don''t write good, man',TIMESTAMP '2015-09-01 11:14:27',NULL);
-INSERT INTO Messages VALUES(43,92,'Databases','This class is pretty hard',TIMESTAMP '2016-06-30 12:05:30',NULL);
-INSERT INTO Messages VALUES(44,91,'Management','You better pass that class, bro',TIMESTAMP '2016-06-30 12:10:00',NULL);
-INSERT INTO Messages VALUES(45,69,'WARNING','We should figure out how to fix this problem ASAP...',TIMESTAMP '2016-04-13 12:00:00',NULL);
-INSERT INTO Messages VALUES(46,72,'SOS','Tie my shoes pls I never learned how to myself',TIMESTAMP '2016-03-20 06:05:34',NULL);
-INSERT INTO Messages VALUES(47,57,'Hilarious','Mike Rock can''t tie his own shoes',TIMESTAMP '2016-03-25 07:30:24',NULL);
-INSERT INTO Messages VALUES(48,51,'Can you not','Stop procrastinating and send them the data',TIMESTAMP '2015-04-13 12:30:23',NULL);
+INSERT INTO Messages VALUES(40,30,'Date tommorow','What is tomorrows date?',TIMESTAMP '2016-03-11 22:31:46',1);
+INSERT INTO Messages VALUES(41,37,'Prom?','What is a Prom and why do you want to go?',TIMESTAMP '2015-04-13 17:00:26',2);
+INSERT INTO Messages VALUES(42,36,'Need writing supplies','We don''t write good, man',TIMESTAMP '2015-09-01 11:14:27',1);
+INSERT INTO Messages VALUES(43,92,'Databases','This class is pretty hard',TIMESTAMP '2016-06-30 12:05:30',2);
+INSERT INTO Messages VALUES(44,91,'Management','You better pass that class, bro',TIMESTAMP '2016-06-30 12:10:00',5);
+INSERT INTO Messages VALUES(45,69,'WARNING','We should figure out how to fix this problem ASAP...',TIMESTAMP '2016-04-13 12:00:00',6);
+INSERT INTO Messages VALUES(46,72,'SOS','Tie my shoes pls I never learned how to myself',TIMESTAMP '2016-03-20 06:05:34',8);
+INSERT INTO Messages VALUES(47,57,'Hilarious','Mike Rock can''t tie his own shoes',TIMESTAMP '2016-03-25 07:30:24',9);
+INSERT INTO Messages VALUES(48,51,'Can you not','Stop procrastinating and send them the data',TIMESTAMP '2015-04-13 12:30:23',10);
 INSERT INTO Messages VALUES(49,79,'Calculus help','Derivatives make no sense to me, can you help tomorrow?',TIMESTAMP '2016-05-20 17:34:56',NULL);
 INSERT INTO Messages VALUES(50,100,'Email address','I need email addresses from all of you',TIMESTAMP '2014-11-13 04:34:45',NULL);
+
+-- 1-20 in group 1
+INSERT INTO Members VALUES(1,1);
+INSERT INTO Members VALUES(1,2);
+INSERT INTO Members VALUES(1,3);
+INSERT INTO Members VALUES(1,4);
+INSERT INTO Members VALUES(1,5);
+INSERT INTO Members VALUES(1,6);
+INSERT INTO Members VALUES(1,7);
+INSERT INTO Members VALUES(1,8);
+INSERT INTO Members VALUES(1,9);
+INSERT INTO Members VALUES(1,10);
+INSERT INTO Members VALUES(1,11);
+INSERT INTO Members VALUES(1,12);
+INSERT INTO Members VALUES(1,13);
+INSERT INTO Members VALUES(1,14);
+INSERT INTO Members VALUES(1,15);
+INSERT INTO Members VALUES(1,16);
+INSERT INTO Members VALUES(1,17);
+INSERT INTO Members VALUES(1,18);
+INSERT INTO Members VALUES(1,19);
+INSERT INTO Members VALUES(1,20);
+-- 21-40 in group 2
+INSERT INTO Members VALUES(2,21);
+INSERT INTO Members VALUES(2,22);
+INSERT INTO Members VALUES(2,23);
+INSERT INTO Members VALUES(2,24);
+INSERT INTO Members VALUES(2,25);
+INSERT INTO Members VALUES(2,26);
+INSERT INTO Members VALUES(2,27);
+INSERT INTO Members VALUES(2,28);
+INSERT INTO Members VALUES(2,29);
+INSERT INTO Members VALUES(2,30);
+INSERT INTO Members VALUES(2,31);
+INSERT INTO Members VALUES(2,32);
+INSERT INTO Members VALUES(2,33);
+INSERT INTO Members VALUES(2,34);
+INSERT INTO Members VALUES(2,35);
+INSERT INTO Members VALUES(2,36);
+INSERT INTO Members VALUES(2,37);
+INSERT INTO Members VALUES(2,38);
+INSERT INTO Members VALUES(2,39);
+INSERT INTO Members VALUES(2,40);
+-- 41-50 in group 3
+INSERT INTO Members VALUES(3,41);
+INSERT INTO Members VALUES(3,42);
+INSERT INTO Members VALUES(3,43);
+INSERT INTO Members VALUES(3,44);
+INSERT INTO Members VALUES(3,45);
+INSERT INTO Members VALUES(3,46);
+INSERT INTO Members VALUES(3,47);
+INSERT INTO Members VALUES(3,48);
+INSERT INTO Members VALUES(3,49);
+INSERT INTO Members VALUES(3,50);
+-- 51-60 in group 4
+INSERT INTO Members VALUES(4,51);
+INSERT INTO Members VALUES(4,52);
+INSERT INTO Members VALUES(4,53);
+INSERT INTO Members VALUES(4,54);
+INSERT INTO Members VALUES(4,55);
+INSERT INTO Members VALUES(4,56);
+INSERT INTO Members VALUES(4,57);
+INSERT INTO Members VALUES(4,58);
+INSERT INTO Members VALUES(4,59);
+INSERT INTO Members VALUES(4,60);
+-- 61-75 in group 5
+INSERT INTO Members VALUES(5,61);
+INSERT INTO Members VALUES(5,62);
+INSERT INTO Members VALUES(5,63);
+INSERT INTO Members VALUES(5,64);
+INSERT INTO Members VALUES(5,65);
+INSERT INTO Members VALUES(5,66);
+INSERT INTO Members VALUES(5,67);
+INSERT INTO Members VALUES(5,68);
+INSERT INTO Members VALUES(5,69);
+INSERT INTO Members VALUES(5,70);
+INSERT INTO Members VALUES(5,71);
+INSERT INTO Members VALUES(5,72);
+INSERT INTO Members VALUES(5,73);
+INSERT INTO Members VALUES(5,74);
+INSERT INTO Members VALUES(5,75);
+-- 76-90 in group 6
+INSERT INTO Members VALUES(6,76);
+INSERT INTO Members VALUES(6,77);
+INSERT INTO Members VALUES(6,78);
+INSERT INTO Members VALUES(6,79);
+INSERT INTO Members VALUES(6,80);
+INSERT INTO Members VALUES(6,81);
+INSERT INTO Members VALUES(6,82);
+INSERT INTO Members VALUES(6,83);
+INSERT INTO Members VALUES(6,84);
+INSERT INTO Members VALUES(6,85);
+INSERT INTO Members VALUES(6,86);
+INSERT INTO Members VALUES(6,87);
+INSERT INTO Members VALUES(6,88);
+INSERT INTO Members VALUES(6,89);
+INSERT INTO Members VALUES(6,90);
+-- 91-100 in group 7
+INSERT INTO Members VALUES(7,91);
+INSERT INTO Members VALUES(7,92);
+INSERT INTO Members VALUES(7,93);
+INSERT INTO Members VALUES(7,94);
+INSERT INTO Members VALUES(7,95);
+INSERT INTO Members VALUES(7,96);
+INSERT INTO Members VALUES(7,97);
+INSERT INTO Members VALUES(7,98);
+INSERT INTO Members VALUES(7,99);
+INSERT INTO Members VALUES(7,100);
+-- 1-10 in group 8
+INSERT INTO Members VALUES(8,1);
+INSERT INTO Members VALUES(8,2);
+INSERT INTO Members VALUES(8,3);
+INSERT INTO Members VALUES(8,4);
+INSERT INTO Members VALUES(8,5);
+INSERT INTO Members VALUES(8,6);
+INSERT INTO Members VALUES(8,7);
+INSERT INTO Members VALUES(8,8);
+INSERT INTO Members VALUES(8,9);
+INSERT INTO Members VALUES(8,10);
+-- 11-20 in group 9
+INSERT INTO Members VALUES(9,11);
+INSERT INTO Members VALUES(9,12);
+INSERT INTO Members VALUES(9,13);
+INSERT INTO Members VALUES(9,14);
+INSERT INTO Members VALUES(9,15);
+INSERT INTO Members VALUES(9,16);
+INSERT INTO Members VALUES(9,17);
+INSERT INTO Members VALUES(9,18);
+INSERT INTO Members VALUES(9,19);
+INSERT INTO Members VALUES(9,20);
+-- 21-30 in group 10
+INSERT INTO Members VALUES(10,21);
+INSERT INTO Members VALUES(10,22);
+INSERT INTO Members VALUES(10,23);
+INSERT INTO Members VALUES(10,24);
+INSERT INTO Members VALUES(10,25);
+INSERT INTO Members VALUES(10,26);
+INSERT INTO Members VALUES(10,27);
+INSERT INTO Members VALUES(10,28);
+INSERT INTO Members VALUES(10,29);
+INSERT INTO Members VALUES(10,30);
+
+--message 1 to group 1 message 
+INSERT INTO Recipients VALUES(1, 1);
+INSERT INTO Recipients VALUES(1, 2);
+INSERT INTO Recipients VALUES(1, 3);
+INSERT INTO Recipients VALUES(1, 4);
+INSERT INTO Recipients VALUES(1, 5);
+INSERT INTO Recipients VALUES(1, 6);
+INSERT INTO Recipients VALUES(1, 7);
+INSERT INTO Recipients VALUES(1, 8);
+INSERT INTO Recipients VALUES(1, 9);
+INSERT INTO Recipients VALUES(1, 10);
+INSERT INTO Recipients VALUES(1, 11); 
+INSERT INTO Recipients VALUES(1, 12); 
+INSERT INTO Recipients VALUES(1, 13); 
+INSERT INTO Recipients VALUES(1, 14); 
+INSERT INTO Recipients VALUES(1, 15); 
+INSERT INTO Recipients VALUES(1, 16); 
+INSERT INTO Recipients VALUES(1, 17); 
+INSERT INTO Recipients VALUES(1, 18); 
+INSERT INTO Recipients VALUES(1, 19);
+INSERT INTO Recipients VALUES(1, 20);
+
+INSERT INTO Recipients VALUES(2, 3);
+INSERT INTO Recipients VALUES(3, 5);
+
+--message 4 group to 2 message
+INSERT INTO Recipients VALUES(4, 21);
+INSERT INTO Recipients VALUES(4, 22);
+INSERT INTO Recipients VALUES(4, 23);
+INSERT INTO Recipients VALUES(4, 24);
+INSERT INTO Recipients VALUES(4, 25);
+INSERT INTO Recipients VALUES(4, 26);
+INSERT INTO Recipients VALUES(4, 27);
+INSERT INTO Recipients VALUES(4, 28);
+INSERT INTO Recipients VALUES(4, 29);
+INSERT INTO Recipients VALUES(4, 30);
+INSERT INTO Recipients VALUES(4, 31);
+INSERT INTO Recipients VALUES(4, 32);
+INSERT INTO Recipients VALUES(4, 33);
+INSERT INTO Recipients VALUES(4, 34);
+INSERT INTO Recipients VALUES(4, 35);
+INSERT INTO Recipients VALUES(4, 36);
+INSERT INTO Recipients VALUES(4, 37);
+INSERT INTO Recipients VALUES(4, 38);
+INSERT INTO Recipients VALUES(4, 39);
+INSERT INTO Recipients VALUES(4, 40); 
+
+INSERT INTO Recipients VALUES(5, 24);
+INSERT INTO Recipients VALUES(6, 69);
+INSERT INTO Recipients VALUES(7, 33);
+
+--message 8 to third group
+INSERT INTO Recipients VALUES(8, 41);
+INSERT INTO Recipients VALUES(8, 42);
+INSERT INTO Recipients VALUES(8, 43);
+INSERT INTO Recipients VALUES(8, 44);
+INSERT INTO Recipients VALUES(8, 45);
+INSERT INTO Recipients VALUES(8, 46);
+INSERT INTO Recipients VALUES(8, 47);
+INSERT INTO Recipients VALUES(8, 48);
+INSERT INTO Recipients VALUES(8, 49);
+INSERT INTO Recipients VALUES(8, 50); 
+
+--message 9 to 4th group
+INSERT INTO Recipients VALUES(9, 51);
+INSERT INTO Recipients VALUES(9, 52);
+INSERT INTO Recipients VALUES(9, 53);
+INSERT INTO Recipients VALUES(9, 54);
+INSERT INTO Recipients VALUES(9, 55);
+INSERT INTO Recipients VALUES(9, 56);
+INSERT INTO Recipients VALUES(9, 57);
+INSERT INTO Recipients VALUES(9, 58);
+INSERT INTO Recipients VALUES(9, 59);
+INSERT INTO Recipients VALUES(9, 60); 
+
+INSERT INTO Recipients VALUES(10, 51);
+
+-- message 11 to 5th group
+INSERT INTO Recipients VALUES(11, 61); 
+INSERT INTO Recipients VALUES(11, 62);
+INSERT INTO Recipients VALUES(11, 63);
+INSERT INTO Recipients VALUES(11, 64);
+INSERT INTO Recipients VALUES(11, 65);
+INSERT INTO Recipients VALUES(11, 66);
+INSERT INTO Recipients VALUES(11, 67);
+INSERT INTO Recipients VALUES(11, 68);
+INSERT INTO Recipients VALUES(11, 69);
+INSERT INTO Recipients VALUES(11, 70);
+INSERT INTO Recipients VALUES(11, 71);
+INSERT INTO Recipients VALUES(11, 72);
+INSERT INTO Recipients VALUES(11, 73);
+INSERT INTO Recipients VALUES(11, 74);
+INSERT INTO Recipients VALUES(11, 75);
+
+INSERT INTO Recipients VALUES(12, 76);
+
+-- message 13 to 6th group
+INSERT INTO Recipients VALUES(13, 76); 
+INSERT INTO Recipients VALUES(13, 77);
+INSERT INTO Recipients VALUES(13, 78);
+INSERT INTO Recipients VALUES(13, 79);
+INSERT INTO Recipients VALUES(13, 80);
+INSERT INTO Recipients VALUES(13, 81);
+INSERT INTO Recipients VALUES(13, 82);
+INSERT INTO Recipients VALUES(13, 83);
+INSERT INTO Recipients VALUES(13, 84);
+INSERT INTO Recipients VALUES(13, 85);
+INSERT INTO Recipients VALUES(13, 86);
+INSERT INTO Recipients VALUES(13, 87);
+INSERT INTO Recipients VALUES(13, 88);
+INSERT INTO Recipients VALUES(13, 89);
+INSERT INTO Recipients VALUES(13, 90);
+
+INSERT INTO Recipients VALUES(14, 76);
+
+--message 15 to 7th group
+INSERT INTO Recipients VALUES(15, 91);
+INSERT INTO Recipients VALUES(15, 92);
+INSERT INTO Recipients VALUES(15, 93);
+INSERT INTO Recipients VALUES(15, 94);
+INSERT INTO Recipients VALUES(15, 95);
+INSERT INTO Recipients VALUES(15, 96);
+INSERT INTO Recipients VALUES(15, 97);
+INSERT INTO Recipients VALUES(15, 98);
+INSERT INTO Recipients VALUES(15, 99);
+INSERT INTO Recipients VALUES(15, 100);
+
+-- message 16 to 6th group 
+INSERT INTO Recipients VALUES(16, 76); 
+INSERT INTO Recipients VALUES(16, 77);
+INSERT INTO Recipients VALUES(16, 78);
+INSERT INTO Recipients VALUES(16, 79);
+INSERT INTO Recipients VALUES(16, 80);
+INSERT INTO Recipients VALUES(16, 81);
+INSERT INTO Recipients VALUES(16, 82);
+INSERT INTO Recipients VALUES(16, 83);
+INSERT INTO Recipients VALUES(16, 84);
+INSERT INTO Recipients VALUES(16, 85);
+INSERT INTO Recipients VALUES(16, 86);
+INSERT INTO Recipients VALUES(16, 87);
+INSERT INTO Recipients VALUES(16, 88);
+INSERT INTO Recipients VALUES(16, 89);
+INSERT INTO Recipients VALUES(16, 90);
+
+-- message 17 to 8th group
+INSERT INTO Recipients VALUES(17, 1); 
+INSERT INTO Recipients VALUES(17, 2);
+INSERT INTO Recipients VALUES(17, 3);
+INSERT INTO Recipients VALUES(17, 4);
+INSERT INTO Recipients VALUES(17, 5);
+INSERT INTO Recipients VALUES(17, 6);
+INSERT INTO Recipients VALUES(17, 7);
+INSERT INTO Recipients VALUES(17, 8);
+INSERT INTO Recipients VALUES(17, 9);
+INSERT INTO Recipients VALUES(17, 10);
+
+--message 18 to 9th group
+INSERT INTO Recipients VALUES(18, 11); 
+INSERT INTO Recipients VALUES(18, 12); 
+INSERT INTO Recipients VALUES(18, 13); 
+INSERT INTO Recipients VALUES(18, 14); 
+INSERT INTO Recipients VALUES(18, 15); 
+INSERT INTO Recipients VALUES(18, 16); 
+INSERT INTO Recipients VALUES(18, 17); 
+INSERT INTO Recipients VALUES(18, 18); 
+INSERT INTO Recipients VALUES(18, 19);
+INSERT INTO Recipients VALUES(18, 20);
+
+--message 19 to 10th group
+INSERT INTO Recipients VALUES(19, 21); 
+INSERT INTO Recipients VALUES(19, 22);
+INSERT INTO Recipients VALUES(19, 23);
+INSERT INTO Recipients VALUES(19, 24);
+INSERT INTO Recipients VALUES(19, 25);
+INSERT INTO Recipients VALUES(19, 26);
+INSERT INTO Recipients VALUES(19, 27);
+INSERT INTO Recipients VALUES(19, 28);
+INSERT INTO Recipients VALUES(19, 29);
+INSERT INTO Recipients VALUES(19, 30);
+
+--message 20 to 10th group
+INSERT INTO Recipients VALUES(20, 21); 
+INSERT INTO Recipients VALUES(20, 22);
+INSERT INTO Recipients VALUES(20, 23);
+INSERT INTO Recipients VALUES(20, 24);
+INSERT INTO Recipients VALUES(20, 25);
+INSERT INTO Recipients VALUES(20, 26);
+INSERT INTO Recipients VALUES(20, 27);
+INSERT INTO Recipients VALUES(20, 28);
+INSERT INTO Recipients VALUES(20, 29);
+INSERT INTO Recipients VALUES(20, 30);
+
+
+INSERT INTO Recipients VALUES(21, 21);
+INSERT INTO Recipients VALUES(22, 3);
+INSERT INTO Recipients VALUES(23, 45);
+
+--message 24 to group 3
+INSERT INTO Recipients VALUES(24, 41);
+INSERT INTO Recipients VALUES(24, 42);
+INSERT INTO Recipients VALUES(24, 43);
+INSERT INTO Recipients VALUES(24, 44);
+INSERT INTO Recipients VALUES(24, 45);
+INSERT INTO Recipients VALUES(24, 46);
+INSERT INTO Recipients VALUES(24, 47);
+INSERT INTO Recipients VALUES(24, 48);
+INSERT INTO Recipients VALUES(24, 49);
+INSERT INTO Recipients VALUES(24, 50);
+
+--messages 25-39 are single messages
+INSERT INTO Recipients VALUES(25, 12);
+INSERT INTO Recipients VALUES(26, 32);
+INSERT INTO Recipients VALUES(27, 1);
+INSERT INTO Recipients VALUES(28, 66);
+INSERT INTO Recipients VALUES(29, 33);
+INSERT INTO Recipients VALUES(30, 45);
+INSERT INTO Recipients VALUES(31, 23);
+INSERT INTO Recipients VALUES(32, 90);
+INSERT INTO Recipients VALUES(33, 99);
+INSERT INTO Recipients VALUES(34, 100);
+INSERT INTO Recipients VALUES(35, 12);
+INSERT INTO Recipients VALUES(36, 9);
+INSERT INTO Recipients VALUES(37, 7);
+INSERT INTO Recipients VALUES(38, 4);
+INSERT INTO Recipients VALUES(39, 18);
+
+--message 40 to 1st group
+INSERT INTO Recipients VALUES(40,1);
+INSERT INTO Recipients VALUES(40,2);
+INSERT INTO Recipients VALUES(40,3);
+INSERT INTO Recipients VALUES(40,4);
+INSERT INTO Recipients VALUES(40,5);
+INSERT INTO Recipients VALUES(40,6);
+INSERT INTO Recipients VALUES(40,7);
+INSERT INTO Recipients VALUES(40,8);
+INSERT INTO Recipients VALUES(40,9);
+INSERT INTO Recipients VALUES(40,10);
+INSERT INTO Recipients VALUES(40,11);
+INSERT INTO Recipients VALUES(40,12);
+INSERT INTO Recipients VALUES(40,13);
+INSERT INTO Recipients VALUES(40,14);
+INSERT INTO Recipients VALUES(40,15);
+INSERT INTO Recipients VALUES(40,16);
+INSERT INTO Recipients VALUES(40,17);
+INSERT INTO Recipients VALUES(40,18);
+INSERT INTO Recipients VALUES(40,19);
+INSERT INTO Recipients VALUES(40,20);
+
+--message 41 to 2nd group
+INSERT INTO Recipients VALUES(41,21);
+INSERT INTO Recipients VALUES(41,22);
+INSERT INTO Recipients VALUES(41,23);
+INSERT INTO Recipients VALUES(41,24);
+INSERT INTO Recipients VALUES(41,25);
+INSERT INTO Recipients VALUES(41,26);
+INSERT INTO Recipients VALUES(41,27);
+INSERT INTO Recipients VALUES(41,28);
+INSERT INTO Recipients VALUES(41,29);
+INSERT INTO Recipients VALUES(41,30);
+INSERT INTO Recipients VALUES(41,31);
+INSERT INTO Recipients VALUES(41,32);
+INSERT INTO Recipients VALUES(41,33);
+INSERT INTO Recipients VALUES(41,34);
+INSERT INTO Recipients VALUES(41,35);
+INSERT INTO Recipients VALUES(41,36);
+INSERT INTO Recipients VALUES(41,37);
+INSERT INTO Recipients VALUES(41,38);
+INSERT INTO Recipients VALUES(41,39);
+INSERT INTO Recipients VALUES(41,40);
+
+--message 42 to 1st group
+INSERT INTO Recipients VALUES(42,1);
+INSERT INTO Recipients VALUES(42,2);
+INSERT INTO Recipients VALUES(42,3);
+INSERT INTO Recipients VALUES(42,4);
+INSERT INTO Recipients VALUES(42,5);
+INSERT INTO Recipients VALUES(42,6);
+INSERT INTO Recipients VALUES(42,7);
+INSERT INTO Recipients VALUES(42,8);
+INSERT INTO Recipients VALUES(42,9);
+INSERT INTO Recipients VALUES(42,10);
+INSERT INTO Recipients VALUES(42,11);
+INSERT INTO Recipients VALUES(42,12);
+INSERT INTO Recipients VALUES(42,13);
+INSERT INTO Recipients VALUES(42,14);
+INSERT INTO Recipients VALUES(42,15);
+INSERT INTO Recipients VALUES(42,16);
+INSERT INTO Recipients VALUES(42,17);
+INSERT INTO Recipients VALUES(42,18);
+INSERT INTO Recipients VALUES(42,19);
+INSERT INTO Recipients VALUES(42,20);
+
+--message 43 to 2nd group
+INSERT INTO Recipients VALUES(43,21);
+INSERT INTO Recipients VALUES(43,22);
+INSERT INTO Recipients VALUES(43,23);
+INSERT INTO Recipients VALUES(43,24);
+INSERT INTO Recipients VALUES(43,25);
+INSERT INTO Recipients VALUES(43,26);
+INSERT INTO Recipients VALUES(43,27);
+INSERT INTO Recipients VALUES(43,28);
+INSERT INTO Recipients VALUES(43,29);
+INSERT INTO Recipients VALUES(43,30);
+INSERT INTO Recipients VALUES(43,31);
+INSERT INTO Recipients VALUES(43,32);
+INSERT INTO Recipients VALUES(43,33);
+INSERT INTO Recipients VALUES(43,34);
+INSERT INTO Recipients VALUES(43,35);
+INSERT INTO Recipients VALUES(43,36);
+INSERT INTO Recipients VALUES(43,37);
+INSERT INTO Recipients VALUES(43,38);
+INSERT INTO Recipients VALUES(43,39);
+INSERT INTO Recipients VALUES(43,40);
+
+--message 44 to 5th group
+INSERT INTO Recipients VALUES(44,61);
+INSERT INTO Recipients VALUES(44,62);
+INSERT INTO Recipients VALUES(44,63);
+INSERT INTO Recipients VALUES(44,64);
+INSERT INTO Recipients VALUES(44,65);
+INSERT INTO Recipients VALUES(44,66);
+INSERT INTO Recipients VALUES(44,67);
+INSERT INTO Recipients VALUES(44,68);
+INSERT INTO Recipients VALUES(44,69);
+INSERT INTO Recipients VALUES(44,70);
+INSERT INTO Recipients VALUES(44,71);
+INSERT INTO Recipients VALUES(44,72);
+INSERT INTO Recipients VALUES(44,73);
+INSERT INTO Recipients VALUES(44,74);
+INSERT INTO Recipients VALUES(44,75);
+
+--message 45 to 6th group
+INSERT INTO Recipients VALUES(45,76);
+INSERT INTO Recipients VALUES(45,77);
+INSERT INTO Recipients VALUES(45,78);
+INSERT INTO Recipients VALUES(45,79);
+INSERT INTO Recipients VALUES(45,80);
+INSERT INTO Recipients VALUES(45,81);
+INSERT INTO Recipients VALUES(45,82);
+INSERT INTO Recipients VALUES(45,83);
+INSERT INTO Recipients VALUES(45,84);
+INSERT INTO Recipients VALUES(45,85);
+INSERT INTO Recipients VALUES(45,86);
+INSERT INTO Recipients VALUES(45,87);
+INSERT INTO Recipients VALUES(45,88);
+INSERT INTO Recipients VALUES(45,89);
+INSERT INTO Recipients VALUES(45,90);
+
+--message 46 to 8th group
+INSERT INTO Recipients VALUES(46,1);
+INSERT INTO Recipients VALUES(46,2);
+INSERT INTO Recipients VALUES(46,3);
+INSERT INTO Recipients VALUES(46,4);
+INSERT INTO Recipients VALUES(46,5);
+INSERT INTO Recipients VALUES(46,6);
+INSERT INTO Recipients VALUES(46,7);
+INSERT INTO Recipients VALUES(46,8);
+INSERT INTO Recipients VALUES(46,9);
+INSERT INTO Recipients VALUES(46,10);
+
+--message 47 to 9th group
+INSERT INTO Recipients VALUES(47,11);
+INSERT INTO Recipients VALUES(47,12);
+INSERT INTO Recipients VALUES(47,13);
+INSERT INTO Recipients VALUES(47,14);
+INSERT INTO Recipients VALUES(47,15);
+INSERT INTO Recipients VALUES(47,16);
+INSERT INTO Recipients VALUES(47,17);
+INSERT INTO Recipients VALUES(47,18);
+INSERT INTO Recipients VALUES(47,19);
+INSERT INTO Recipients VALUES(47,20);
+
+--message 48 to 10th group
+INSERT INTO Recipients VALUES(48,21);
+INSERT INTO Recipients VALUES(48,22);
+INSERT INTO Recipients VALUES(48,23);
+INSERT INTO Recipients VALUES(48,24);
+INSERT INTO Recipients VALUES(48,25);
+INSERT INTO Recipients VALUES(48,26);
+INSERT INTO Recipients VALUES(48,27);
+INSERT INTO Recipients VALUES(48,28);
+INSERT INTO Recipients VALUES(48,29);
+INSERT INTO Recipients VALUES(48,30);
+
+--messages 49-50 individual
+INSERT INTO Recipients VALUES(49,69);
+INSERT INTO Recipients VALUES(50,96);

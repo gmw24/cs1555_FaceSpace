@@ -28,30 +28,37 @@ CREATE TABLE Groups
 CREATE TABLE Friendships
 (
 	friendshipId number(10) PRIMARY KEY,
-	senderId number(10) FOREIGN KEY REFERENCES Profiles(userId),
-	receiverId number(10) FOREIGN KEY REFERENCES Profiles(userId),
+	senderId number(10),
+	receiverId number(10),
 	approved number(1),
-	dateEstablished TIMESTAMP DEFAULT NULL
+	dateEstablished TIMESTAMP DEFAULT NULL,
+	CONSTRAINT fSender_FK FOREIGN KEY (senderId) REFERENCES Profiles(userId),
+	CONSTRAINT fReceiver_FK FOREIGN KEY (receiverId) REFERENCES Profiles(userId)
 );
 
 CREATE TABLE Members
 (
-	groupId number(10) FOREIGN KEY REFERENCES Groups(groupId),
-	userId number(10) FOREIGN KEY REFERENCES Profiles(userId)
+	groupId number(10),
+	userId number(10),
+	CONSTRAINT group_FK FOREIGN KEY (groupId) REFERENCES Groups(groupId),
+	CONSTRAINT userM_FK FOREIGN KEY (userId) REFERENCES Profiles(userId)
 );
 
 CREATE TABLE Messages
 (
 	messageId number(10) PRIMARY KEY,
-	senderId number(10) FOREIGN KEY REFERENCES Profiles(userId),
+	senderId number(10),
 	subject varchar2(32),
 	messageText varchar2(140),
 	dateSent TIMESTAMP,
-	groupId number(10)
+	groupId number(10),
+	CONSTRAINT msgSender_FK FOREIGN KEY (senderId) REFERENCES Profiles(userId)
 );
 
 CREATE TABLE Recipients
 (
-	messageId number(10) FOREIGN KEY REFERENCES Messages(messageId),
-	userId number(10) FOREIGN KEY REFERENCES Profiles(userId)
+	messageId number(10),
+	userId number(10),
+	CONSTRAINT message_FK FOREIGN KEY (messageId) REFERENCES Messages(messageId),
+	CONSTRAINT userR_FK FOREIGN KEY (userId) REFERENCES Profiles(userId)
 );
