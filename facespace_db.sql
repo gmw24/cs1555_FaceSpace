@@ -1,4 +1,4 @@
---facespace schema, group project cs1555
+--facespace schema, group project cs1555,milestone 1
 
 DROP TABLE Profiles CASCADE CONSTRAINTS;
 DROP TABLE Friendships CASCADE CONSTRAINTS;
