@@ -18,59 +18,73 @@ public class FaceSpace {
     private String query;  //this will hold the query we are using
     
     public static boolean createUser() {
-
+    	
+    	return true;
     }
 
-`   public static boolean initiateFriendship() {
+    public static boolean initiateFriendship() {
     	
+    	return true;
     }
 
     public static boolean establishFriendship() {
-
+    	
+    	return true;
     }
 
     public static boolean displayFriends() {
-
+    	
+    	return true;
     }
 
     public static boolean createGroup() {
-
+    	
+    	return true;
     }
     
     public static boolean addToGroup() {
     	
+    	return true;
     }
     
     public static boolean sendMessageToUser() {
     	
+    	return true;
     }
     
     public static boolean sendMessageToGroup() {
     	
+    	return true;
     }
     
     public static boolean displayMessages() {
     	
+    	return true;
     }
     
     public static boolean displayNewMessages() {
     	
+    	return true;
     }
     
     public static boolean searchForUser() {
     	
+    	return true;
     }
     
     public static boolean threeDegrees() {
     	
+    	return true;
     }
     
     public static boolean topMessagers() {
     	
+    	return true;
     }
     
     public static boolean dropUser() {
     	
+    	return true;
     }    
 
     public static int showMenu(){
