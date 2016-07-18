@@ -17,71 +17,86 @@ public class FaceSpace {
     private ResultSet resultSet; //used to hold the result of queries
     private String query;  //this will hold the query we are using
     
+    //Mike
     public static boolean createUser() {
     	
     	return true;
     }
-
+    
+    //Jordan
     public static boolean initiateFriendship() {
     	
     	return true;
     }
-
+    
+    //Jordan
     public static boolean establishFriendship() {
     	
     	return true;
     }
-
+    
+    //Mike
     public static boolean displayFriends() {
     	
     	return true;
     }
-
+    
+    //Gabe
     public static boolean createGroup() {
     	
     	return true;
     }
     
+    //Gabe
+    //need to check membership limit of group
     public static boolean addToGroup() {
     	
     	return true;
     }
     
+    //Jordan
     public static boolean sendMessageToUser() {
     	
     	return true;
     }
     
+    //Jordan
     public static boolean sendMessageToGroup() {
     	
     	return true;
     }
     
+    //Mike
     public static boolean displayMessages() {
     	
     	return true;
     }
     
+    //Mike
     public static boolean displayNewMessages() {
     	
     	return true;
     }
     
+    //Gabe
     public static boolean searchForUser() {
     	
     	return true;
     }
     
+    //Mike
     public static boolean threeDegrees() {
     	
     	return true;
     }
     
+    //Jordan
     public static boolean topMessagers() {
     	
     	return true;
     }
     
+    //Gabe
     public static boolean dropUser() {
     	
     	return true;
