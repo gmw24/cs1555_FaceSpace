@@ -17,6 +17,62 @@ public class FaceSpace {
     private ResultSet resultSet; //used to hold the result of queries
     private String query;  //this will hold the query we are using
     
+    public static boolean createUser() {
+
+    }
+
+`   public static boolean initiateFriendship() {
+    	
+    }
+
+    public static boolean establishFriendship() {
+
+    }
+
+    public static boolean displayFriends() {
+
+    }
+
+    public static boolean createGroup() {
+
+    }
+    
+    public static boolean addToGroup() {
+    	
+    }
+    
+    public static boolean sendMessageToUser() {
+    	
+    }
+    
+    public static boolean sendMessageToGroup() {
+    	
+    }
+    
+    public static boolean displayMessages() {
+    	
+    }
+    
+    public static boolean displayNewMessages() {
+    	
+    }
+    
+    public static boolean searchForUser() {
+    	
+    }
+    
+    public static boolean threeDegrees() {
+    	
+    }
+    
+    public static boolean topMessagers() {
+    	
+    }
+    
+    public static boolean dropUser() {
+    	
+    }    
+
     public static int showMenu(){
     	Scanner in = new Scanner(System.in);
     	System.out.println("\n--FaceSpace Menu--");
@@ -84,3 +140,4 @@ public class FaceSpace {
 		}
 	}
 }
+
