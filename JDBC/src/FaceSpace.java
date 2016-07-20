@@ -46,6 +46,7 @@ public class FaceSpace {
     	System.out.println("--Create group--");
     	Scanner in = new Scanner(System.in);
     	try {
+    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); //because counting number groups
 			Statement stmt = dbconn.createStatement();
 			int numGroups = 0;
 			String query = "SELECT COUNT(*) AS count FROM Groups";
@@ -78,6 +79,8 @@ public class FaceSpace {
 			System.out.println("Executing prepared statement");
 			pstmt.executeUpdate();
 			
+			
+			System.out.println("Insert complete!");
 	    	try {
     			if (stmt !=null) stmt.close();
     		} catch (SQLException e) {
@@ -85,7 +88,7 @@ public class FaceSpace {
     		}
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			printSQLException(e);
 		}
     	return true;
     }
@@ -95,29 +98,36 @@ public class FaceSpace {
     public static boolean addToGroup() {
     	
     	try {
+    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);//to prevent two users being added at same time, potentially overflowing group membership
 	    	Scanner in = new Scanner(System.in);
 	    	int userId = -1;
 	    	int count = -1;
 	    	int groupId = -1;
 	    	
 	    	Statement stmt = dbconn.createStatement();
-	    	String qry = "SELECT * FROM Profiles";
-	    	ResultSet resSet = stmt.executeQuery(qry);
-	    	
-	    	while(resSet.next()){
-	    		System.out.println(resSet.getInt(1) + " " + resSet.getString(2) + " " + resSet.getString(3));
-	    	}
+//	    	String qry = "SELECT * FROM Profiles";
+//	    	String qry2 = "SELECT * FROM Groups";
+//	    	ResultSet resSet = stmt.executeQuery(qry);
+//	    	ResultSet resSet2 = stmt.executeQuery(qry2);
+//	    	
+//	    	while(resSet.next()){
+//	    		System.out.println(resSet.getInt(1) + " " + resSet.getString(2) + " " + resSet.getString(3));
+//	    	}
+//	    	
+//	    	while(resSet2.next()){
+//	    		System.out.println(resSet2.getInt(1) + " " + resSet2.getString(2) + " " + resSet2.getString(3));
+//	    	}
 	    	
 	    	String countquery = "SELECT COUNT(*) as cnt FROM Profiles WHERE fname = ? AND lname = ?";
 	    	String query = "SELECT * FROM Profiles WHERE fname = ? AND lname = ?";
 	    	String groupQuery = "SELECT groupId FROM Groups WHERE name = ?";
 	    	
 	    	System.out.println("What is the first name?");
-	    	String fname = in.next();
+	    	String fname = in.nextLine();
 	    	System.out.println("What is the last name?");
-	    	String lname = in.next();
+	    	String lname = in.nextLine();
 	    	System.out.println("What group?");
-	    	String group = in.next();
+	    	String group = in.nextLine();
     	
 			PreparedStatement pstmt = dbconn.prepareStatement(query);
 			pstmt.setString(1, fname);
@@ -135,7 +145,7 @@ public class FaceSpace {
 			ResultSet rs3 = pstmt3.executeQuery();
 			
 			while(rs3.next()){
-				groupId = rs.getInt(1);
+				groupId = rs3.getInt(1);
 			}
 			
 			while(rs2.next()){
@@ -157,6 +167,13 @@ public class FaceSpace {
 			}
 			System.out.println(userId);
 			
+			if(groupId == -1 || userId == -1){
+				System.out.println("userId:" + userId);
+				System.out.println("groupId:" + groupId);
+				System.out.println("Error. Either user or group id was not found");
+				return false;
+			}
+			
 			String insertQuery = "INSERT INTO Members VALUES(?, ?)";
 			
 			PreparedStatement finalStatement = dbconn.prepareStatement(insertQuery);
@@ -164,6 +181,8 @@ public class FaceSpace {
 			finalStatement.setInt(2, userId);
 			
 			finalStatement.executeUpdate();
+			
+			System.out.println("Row added successfully");
 	    	
 	    	try {
 			if (stmt !=null) stmt.close();
@@ -172,8 +191,7 @@ public class FaceSpace {
 		}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			printSQLException(e);
 		}
     	
     	return true;
@@ -205,7 +223,48 @@ public class FaceSpace {
     
     //Gabe
     public static boolean searchForUser() {
-    	
+    	try {
+    		//serializable because nothing else should occur when dropUser is taking place
+    		dbconn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+    		Statement stmt = dbconn.createStatement();
+    		
+	    	Scanner in = new Scanner(System.in);
+	    	System.out.print("Please enter your search string: ");
+	    	String searchString = in.nextLine();
+	    	
+	    	String searchQuery = "SELECT * FROM Profiles WHERE UPPER(fname) LIKE ? OR UPPER(lname) LIKE ?";
+	    	
+	    	String[] partials = searchString.split(" ");
+	    	ResultSet rs;
+	    	PreparedStatement pstmt;
+	    	int count = 0;
+	    	
+	    	for (int i = 0; i < partials.length; i++){
+	    		System.out.println("All users matching " + partials[i] + ":");
+	    		pstmt = dbconn.prepareStatement(searchQuery);
+	    		pstmt.setString(1, "%" + partials[i] + "%");
+	    		pstmt.setString(2, "%" + partials[i] + "%");
+	    		rs = pstmt.executeQuery();
+	    		while(rs.next()){
+	    			count++;
+	    			System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getInt(5) + "/" +
+	    					rs.getInt(6) + "/" + rs.getString(7) + " " + rs.getTimestamp(8));
+	    		}
+	    		if(count == 0)
+	    			System.out.println("No results found!");
+	    		else 
+	    			count = 0;
+	    	}
+	    	
+	    	try {
+	    		if (stmt !=null) stmt.close();
+	    	} catch (SQLException e) {
+	    		System.out.println("Cannot close Statement. Machine error: "+e.toString());
+	    	}
+			
+		} catch (SQLException e) {
+			printSQLException(e);
+		}
     	return true;
     }
     
@@ -223,6 +282,67 @@ public class FaceSpace {
     
     //Gabe
     public static boolean dropUser() {
+    	
+    	try {
+    		//serializable because nothing else should occur when dropUser is taking place
+    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+    		
+	    	Scanner in = new Scanner(System.in);
+	    	
+	    	Statement stmt = dbconn.createStatement();
+	    	
+	    	System.out.println("What is userId?");
+	    	int id = in.nextInt();
+	    	
+	    	String delQuery = "DELETE FROM Profiles WHERE userId = ?";
+	    	
+	    	PreparedStatement pstmt = dbconn.prepareStatement(delQuery);
+	    	pstmt.setInt(1, id);
+	    	pstmt.executeUpdate();
+	    	
+	    	String messagesQuery = "SELECT messageId FROM Messages WHERE senderId IS NULL";
+	    	String recipientsQuery = "SELECT * FROM Recipients WHERE messageId = ?";
+	    	String deleteQuery = "DELETE FROM Messages WHERE messageId = ?";
+	    	
+	    	ResultSet nullMsgs = stmt.executeQuery(messagesQuery);
+	    	int msgId = -1;
+	    	int counter = 0;
+	    	
+	    	//loops through null messages. For each message, run another query
+	    	//that determines whether that message still has existing recipients
+	    	//if it has no recipients, it is safe to drop that message from db
+	    	while(nullMsgs.next()){
+	    		msgId = nullMsgs.getInt(1);
+	    		System.out.println(msgId);
+	    		PreparedStatement pstmt2 = dbconn.prepareStatement(recipientsQuery);
+	    		pstmt2.setInt(1,  msgId);
+	    		ResultSet rs = pstmt2.executeQuery();
+	    		while(rs.next()){
+	    			counter++;
+	    		}
+	    		if(counter == 0){
+	    			System.out.println("That message has no recipients, it can be deleted entirely");
+	    			PreparedStatement pstmt3 = dbconn.prepareStatement(deleteQuery);
+	    			pstmt3.setInt(1, msgId);
+	    			pstmt3.executeUpdate();
+	    			System.out.println("Message deleted successfully");
+	    		}
+	    		else{
+	    			counter = 0;
+	    		}
+	    	}
+    	
+			System.out.println("Profile deleted successfully");
+	    	
+	    	try {
+	    		if (stmt !=null) stmt.close();
+	    	} catch (SQLException e) {
+	    		System.out.println("Cannot close Statement. Machine error: "+e.toString());
+	    	}
+			
+		} catch (SQLException e) {
+			printSQLException(e);
+		}
     	
     	return true;
     }    
@@ -248,6 +368,52 @@ public class FaceSpace {
     	
     	int choice = in.nextInt();
     	return choice;
+    }
+    
+    
+    //these bottom two methods were taken from oracle java docs and are used to easily print out any sql exceptions
+    //https://docs.oracle.com/javase/tutorial/jdbc/basics/sqlexception.html
+    public static void printSQLException(SQLException ex) {
+        for (Throwable e : ex) {
+            if (e instanceof SQLException) {
+                if (ignoreSQLException(
+                    ((SQLException)e).
+                    getSQLState()) == false) {
+
+                    e.printStackTrace(System.err);
+                    System.err.println("SQLState: " +
+                        ((SQLException)e).getSQLState());
+
+                    System.err.println("Error Code: " +
+                        ((SQLException)e).getErrorCode());
+
+                    System.err.println("Message: " + e.getMessage());
+
+                    Throwable t = ex.getCause();
+                    while(t != null) {
+                        System.out.println("Cause: " + t);
+                        t = t.getCause();
+                    }
+                }
+            }
+        }
+    }
+    public static boolean ignoreSQLException(String sqlState) {
+
+        if (sqlState == null) {
+            System.out.println("The SQL state is not defined!");
+            return false;
+        }
+
+        // X0Y32: Jar file already exists in schema
+        if (sqlState.equalsIgnoreCase("X0Y32"))
+            return true;
+
+        // 42Y55: Table already exists in schema
+        if (sqlState.equalsIgnoreCase("42Y55"))
+            return true;
+
+        return false;
     }
     
 	public static void main(String args[]) throws SQLException{		
@@ -283,6 +449,12 @@ public class FaceSpace {
 		    		break;
 		    	case 6:
 		    		addToGroup();
+		    		break;
+		    	case 11:
+		    		searchForUser();
+		    		break;
+		    	case 14:
+		    		dropUser();
 		    		break;
 		    	default:
 		    		break;
