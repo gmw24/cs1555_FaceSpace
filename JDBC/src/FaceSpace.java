@@ -12,7 +12,7 @@ public class FaceSpace {
 	
 	//global, static variables
 	private static Connection dbconn;
-	private Statement statement; //used to create an instance of the connection
+	private static Statement statement; //used to create an instance of the connection
     private PreparedStatement prepStatement; //used to create a prepared statement, that will be later reused
     private ResultSet resultSet; //used to hold the result of queries
     private String query;  //this will hold the query we are using
@@ -43,13 +43,138 @@ public class FaceSpace {
     
     //Gabe
     public static boolean createGroup() {
-    	
+    	System.out.println("--Create group--");
+    	Scanner in = new Scanner(System.in);
+    	try {
+			Statement stmt = dbconn.createStatement();
+			int numGroups = 0;
+			String query = "SELECT COUNT(*) AS count FROM Groups";
+			ResultSet rs = stmt.executeQuery(query);
+			
+			while(rs.next()){
+				numGroups = rs.getInt("count");
+			}
+			
+            rs = stmt.executeQuery("SELECT * FROM Groups");
+			
+			while(rs.next()){
+				System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getInt(4));
+			}
+			
+			System.out.println("What is the name of your group?");
+			String groupName = in.nextLine();
+			System.out.println("What is it's description?");
+			String groupDesc = in.nextLine();
+			System.out.println("What is the membership limit?");
+			int membership = in.nextInt();
+			
+			query = "INSERT INTO Groups VALUES (?,?,?,?)";
+			PreparedStatement pstmt = dbconn.prepareStatement(query);
+			pstmt.setInt(1,(numGroups+1));
+			pstmt.setString(2,groupName);
+			pstmt.setString(3,groupDesc);
+			pstmt.setInt(4,membership);
+			
+			System.out.println("Executing prepared statement");
+			pstmt.executeUpdate();
+			
+	    	try {
+    			if (stmt !=null) stmt.close();
+    		} catch (SQLException e) {
+    			System.out.println("Cannot close Statement. Machine error: "+e.toString());
+    		}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     	return true;
     }
     
     //Gabe
     //need to check membership limit of group
     public static boolean addToGroup() {
+    	
+    	try {
+	    	Scanner in = new Scanner(System.in);
+	    	int userId = -1;
+	    	int count = -1;
+	    	int groupId = -1;
+	    	
+	    	Statement stmt = dbconn.createStatement();
+	    	String qry = "SELECT * FROM Profiles";
+	    	ResultSet resSet = stmt.executeQuery(qry);
+	    	
+	    	while(resSet.next()){
+	    		System.out.println(resSet.getInt(1) + " " + resSet.getString(2) + " " + resSet.getString(3));
+	    	}
+	    	
+	    	String countquery = "SELECT COUNT(*) as cnt FROM Profiles WHERE fname = ? AND lname = ?";
+	    	String query = "SELECT * FROM Profiles WHERE fname = ? AND lname = ?";
+	    	String groupQuery = "SELECT groupId FROM Groups WHERE name = ?";
+	    	
+	    	System.out.println("What is the first name?");
+	    	String fname = in.next();
+	    	System.out.println("What is the last name?");
+	    	String lname = in.next();
+	    	System.out.println("What group?");
+	    	String group = in.next();
+    	
+			PreparedStatement pstmt = dbconn.prepareStatement(query);
+			pstmt.setString(1, fname);
+			pstmt.setString(2, lname);
+			
+			PreparedStatement pstmt2 = dbconn.prepareStatement(countquery);
+			pstmt2.setString(1, fname);
+			pstmt2.setString(2, lname);
+			
+			PreparedStatement pstmt3 = dbconn.prepareStatement(groupQuery);
+			pstmt3.setString(1, group);
+			
+			ResultSet rs = pstmt.executeQuery();
+			ResultSet rs2 = pstmt2.executeQuery();
+			ResultSet rs3 = pstmt3.executeQuery();
+			
+			while(rs3.next()){
+				groupId = rs.getInt(1);
+			}
+			
+			while(rs2.next()){
+				count = rs2.getInt("cnt");
+				System.out.println(count);
+			}
+			
+			while(rs.next()){
+				if(count == -1){
+					System.out.println("No results recieved");
+				}
+				if(count == 0){
+					System.out.println("No facespace user by that name");
+				}
+				if(count > 1){
+					System.out.println("More than 1 user has that name!");
+				}
+				userId = rs.getInt(1);
+			}
+			System.out.println(userId);
+			
+			String insertQuery = "INSERT INTO Members VALUES(?, ?)";
+			
+			PreparedStatement finalStatement = dbconn.prepareStatement(insertQuery);
+			finalStatement.setInt(1, groupId);
+			finalStatement.setInt(2, userId);
+			
+			finalStatement.executeUpdate();
+	    	
+	    	try {
+			if (stmt !=null) stmt.close();
+		} catch (SQLException e) {
+			System.out.println("Cannot close Statement. Machine error: "+e.toString());
+		}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
     	return true;
     }
@@ -128,6 +253,8 @@ public class FaceSpace {
 	public static void main(String args[]) throws SQLException{		
 		String username = "gmw24";
 		String password = "3858457";
+		
+		System.out.println("Welcome to facespace");
 
 		try{
 		    // Register the oracle driver.  
@@ -151,6 +278,12 @@ public class FaceSpace {
 		    }
 		    
 		    switch(choice){
+		    	case 5:
+		    		createGroup();
+		    		break;
+		    	case 6:
+		    		addToGroup();
+		    		break;
 		    	default:
 		    		break;
 		    }
@@ -158,13 +291,15 @@ public class FaceSpace {
 		catch(Exception Ex)  {
 		    System.out.println("Error connecting to database.  Machine Error: " +
 				       Ex.toString());
+		    Ex.printStackTrace();
 		}
 		finally
 		{
-			/*
-			 * NOTE: the connection should be created once and used through out the whole project;
-			 * Is very expensive to open a connection therefore you should not close it after every operation on database
-			 */
+		 	try {
+    			if (statement !=null) statement.close();
+    		} catch (SQLException e) {
+    			System.out.println("Cannot close Statement. Machine error: "+e.toString());
+    		}
 			dbconn.close();
 		}
 	}
