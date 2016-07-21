@@ -14,7 +14,7 @@ CREATE TABLE Profiles
 	email 	varchar2(32),
 	dobDay 	number(2),
 	dobMonth	number(2),
-	dobYear 	number(4),	
+	dobYear 	number(4),
 	lastLogin TIMESTAMP
 );
 

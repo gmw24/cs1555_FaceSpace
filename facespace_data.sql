@@ -1,5 +1,5 @@
 --sample data for facespace, milestone 1
-INSERT INTO Profiles VALUES (1, 'Gabriel', 'Wells', 'gmw24@yahoo.com', 6, 7, 1994, NULL);
+INSERT INTO Profiles VALUES (1, 'Gabriel', 'Wells', 'gmw24@yahoo.com', 6, 7, 1994, TIMESTAMP '2016-01-01 07:15:14');
 INSERT INTO Profiles VALUES (2, 'Mike', 'McAlpin', 'mjm275@yahoo.com', 7, 30, 1995, NULL);
 INSERT INTO Profiles VALUES (3, 'Jordan', 'Britton', 'job24@yahoo.com', 4, 2, 1994, NULL);
 INSERT INTO Profiles VALUES (4, 'Hunter', 'Gaston', 'hgg4@yahoo.com', 7, 14, 1995, NULL);
