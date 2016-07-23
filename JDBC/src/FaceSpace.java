@@ -175,6 +175,22 @@ public class FaceSpace {
     	return true;
     }
     
+    private static boolean checkInput(String in){
+    	
+    	//common sql injection attack characters that have no business being in input
+    	if (in.contains("--") || in.contains(";") || in.contains("=") || in.contains(")")){
+    		System.out.println("Error. Your input is suspicious. Please try again");
+    		return false;
+    	}
+    	
+    	//other sql keywords that may be used
+    	if (in.contains("DROP") || in.contains("SELECT") || in.contains("UPDATE")){
+    		System.out.println("Error. No SQL keywords allowed in input");
+    		return false;
+    	}
+    	return true;
+    }
+    
     //Gabe
     public static boolean createGroup() {
     	System.out.println("--Create group--");
