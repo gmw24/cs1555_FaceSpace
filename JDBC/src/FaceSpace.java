@@ -775,6 +775,137 @@ public class FaceSpace {
     	return choice;
     }
     
+    private int lookupUser() {
+    	Scanner inScan=new Scanner(System.in);
+    	int userId = -1;
+    	System.out.println("Lookup user by email or name? (E/N)");
+    	String response = inScan.next();
+    	if(response.toUpperCase().equals("E")) {
+    		System.out.print("Enter email: ");
+    		String email = inScan.next();
+    		userId = lookupByEmail(email);
+    	}
+    	else {
+    		System.out.print("Enter first name: ");
+    		String fname = inScan.next();
+    		System.out.print("Enter last name: ");
+    		String lname = inScan.next();
+    		userId = lookupByName(fname,lname);
+    	}    	
+    	return userId;
+    }
+    
+    private int lookupByEmail(String email) {
+    	Scanner inScan = new Scanner(System.in);
+    	int userId = -1;
+    	try {
+    		ResultSet resultSet2;
+			dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
+			dbconn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED); //which is the default
+			statement = dbconn.createStatement();
+			
+		    query = "SELECT userId,fname,lname,email "
+		    		+"FROM Profiles "
+		    		+"WHERE email=?";
+		    prepStatement = dbconn.prepareStatement(query);
+		    prepStatement.setString(1,email);
+			resultSet = prepStatement.executeQuery();
+			resultSet2 = prepStatement.executeQuery();
+			int count = 0;
+			while(resultSet.next()) {
+				count++;
+		    }
+			if(count == 0) {
+				return -1;
+			}
+			else if(count == 1) {
+				resultSet2.next();
+				return resultSet2.getInt("userId");
+			}
+			else {
+				int index = 0;
+				ArrayList<Integer> ids = new ArrayList<Integer>();
+				while(resultSet2.next()) {
+					index++;
+					ids.add(resultSet2.getInt("userId"));
+					System.out.println(index+".\t"+resultSet2.getString("fname")+" "+resultSet2.getString("lname")+"\t"+resultSet2.getString("email"));
+				}
+				System.out.println("\nChoose a user (enter the first number on the line)(enter -1 if none): ");
+				return inScan.nextInt();
+			}
+			
+	    }
+		catch(Exception Ex)  
+		{
+			System.out.println("Machine Error: " +
+					   Ex.toString());
+		}
+		finally{
+			try {
+				if (statement!=null) statement.close();
+			} catch (SQLException e) {
+				System.out.println("Cannot close Statement. Machine error: "+e.toString());
+			}
+		}
+    	return -1;
+    }
+    
+    private int lookupByName(String fname, String lname) {
+    	Scanner inScan = new Scanner(System.in);
+    	int userId = -1;
+    	try {
+    		ResultSet resultSet2;
+			dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
+			dbconn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED); //which is the default
+			statement = dbconn.createStatement();
+			
+		    query = "SELECT userId,fname,lname,email "
+		    		+"FROM Profiles "
+		    		+"WHERE fname=? AND lname=?";
+		    prepStatement = dbconn.prepareStatement(query);
+		    prepStatement.setString(1,fname);
+		    prepStatement.setString(2,lname);
+			resultSet = prepStatement.executeQuery();
+			resultSet2 = prepStatement.executeQuery();
+			int count = 0;
+			while(resultSet.next()) {
+				count++;
+		    }
+			if(count == 0) {
+				return -1;
+			}
+			else if(count == 1) {
+				resultSet2.next();
+				return resultSet2.getInt("userId");
+			}
+			else {
+				int index = 0;
+				ArrayList<Integer> ids = new ArrayList<Integer>();
+				while(resultSet2.next()) {
+					index++;
+					ids.add(resultSet2.getInt("userId"));
+					System.out.println(index+".\t"+resultSet2.getString("fname")+" "+resultSet2.getString("lname")+"\t"+resultSet2.getString("email"));
+				}
+				System.out.println("\nChoose a user (enter the first number on the line)(enter -1 if none): ");
+				return inScan.nextInt();
+			}
+			
+	    }
+		catch(Exception Ex)  
+		{
+			System.out.println("Machine Error: " +
+					   Ex.toString());
+		}
+		finally{
+			try {
+				if (statement!=null) statement.close();
+			} catch (SQLException e) {
+				System.out.println("Cannot close Statement. Machine error: "+e.toString());
+			}
+		}
+    	
+    	return -1;
+    }
     
     //these bottom two methods were taken from oracle java docs and are used to easily print out any sql exceptions
     //https://docs.oracle.com/javase/tutorial/jdbc/basics/sqlexception.html
