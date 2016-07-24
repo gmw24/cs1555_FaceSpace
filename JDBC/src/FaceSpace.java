@@ -21,15 +21,27 @@ public class FaceSpace {
     private ResultSet resultSet; //used to hold the result of queries
     private String query;  //this will hold the query we are using*/
     
-    //Mike
+    //Mike - injection checked
     public static boolean createUser() {
     	Scanner inScan=new Scanner(System.in);
     	System.out.print("\nEnter the first name: ");
     	String fname = inScan.next();
+    	while(!checkInput(fname)) {
+        	System.out.print("\nEnter the first name: ");
+        	fname = inScan.next();
+    	}
     	System.out.print("\nEnter the last name: ");
     	String lname = inScan.next();
+    	while(!checkInput(lname)) {
+        	System.out.print("\nEnter the last name: ");
+        	lname = inScan.next();
+    	}
     	System.out.print("\nEnter the email address: ");
     	String email = inScan.next();
+    	while(!checkInput(email)) {
+        	System.out.print("\nEnter the email address: ");
+        	email = inScan.next();
+    	}
     	int dobYear = -1, dobMonth = -1, dobDay = -1; //initialize these to negative so the while loops run the first time at least
     	while(dobYear < 0) {
     		System.out.print("\nEnter the year of birth (4 digits): ");
@@ -44,7 +56,7 @@ public class FaceSpace {
         	dobDay = inScan.nextInt();
     	}
  	   	try {
- 	   		System.out.println("Getting number of rows...");
+ 	   		//System.out.println("Getting number of rows...");
 			dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
 			dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			statement = dbconn.createStatement();
@@ -57,7 +69,7 @@ public class FaceSpace {
 		    if(resultSet.next()) {
 				max = resultSet.getInt("maxId");
 		    }
-		    System.out.println("Number of rows: "+max);
+		    //System.out.println("Number of rows: "+max);
 		    
 		    //now do the actual insert
 		    query = "INSERT INTO Profiles VALUES (?,?,?,?,?,?,?,NULL)";
@@ -74,17 +86,18 @@ public class FaceSpace {
 		    int result = prepStatement.executeUpdate();
 		    //System.out.println("After statement execution");
 		    if (result == 1) 
-		    	System.out.println("Update is successful, result=" + result);
+		    	System.out.println("Update is successful!");
+		    	//System.out.println("Update is successful, result=" + result);
 		    else 
 		    	System.out.println("No rows were updated");
 		    
 		    dbconn.commit();
 		    resultSet.close();
 	    }
-		catch(Exception Ex)  
+		catch(SQLException Ex)  
 		{
-			System.out.println("Machine Error: " +
-					   Ex.toString());
+			//System.out.println("Machine Error: " +Ex.toString());
+			printSQLException(Ex);
 			return false;
 		}
 		finally{
@@ -110,10 +123,10 @@ public class FaceSpace {
     	return true;
     }
     
-    //Mike
+    //Mike - injection tested
     public static boolean displayFriends() {
     	Scanner inScan=new Scanner(System.in);
-    	int userId = -1; //initialize these to negative so the while loops run the first time at least
+    	int userId = -1; //initialize this to negative so the while loops run the first time at least
     	while(userId < 1) {
     		System.out.print("\nEnter the userId: ");
     		userId = inScan.nextInt();
@@ -158,10 +171,9 @@ public class FaceSpace {
 			
 			System.out.println("\nEnd of Friends!");
 	    }
-		catch(Exception Ex)  
+		catch(SQLException Ex)  
 		{
-			System.out.println("Machine Error: " +
-					   Ex.toString());
+			printSQLException(Ex);
 			return false;
 		}
 		finally{
@@ -406,10 +418,9 @@ public class FaceSpace {
 			
 			System.out.println("\nEnd of Messages!");
 	    }
-		catch(Exception Ex)  
+		catch(SQLException Ex)  
 		{
-			System.out.println("Machine Error: " +
-					   Ex.toString());
+			printSQLException(Ex);
 			return false;
 		}
 		finally{
@@ -491,10 +502,9 @@ public class FaceSpace {
 			
 			System.out.println("\nEnd of Messages!");
 	    }
-		catch(Exception Ex)  
+		catch(SQLException Ex)  
 		{
-			System.out.println("Machine Error: " +
-					   Ex.toString());
+			printSQLException(Ex);
 			return false;
 		}
 		finally{
@@ -567,78 +577,62 @@ public class FaceSpace {
     		System.out.print("\nEnter the userId for B: ");
     		userId_B = inScan.nextInt();
     	}
-    	try {
-    		String pathStart="Start: User "+userId_A,currPath1,currPath2,currPath3;
-    		ArrayList<Integer> friends_1,friends_2,friends_3;
-    		
-    		friends_1 = getFriends(userId_A);
-    		//first level
-    		for(int i=0; i<friends_1.size(); i++) {
-    			currPath1 = " --> User "+friends_1.get(i);
-    			if(friends_1.get(i) == userId_B) {
-    				System.out.println("Path found! (1 hop)");
-    				System.out.println(pathStart+currPath1);
-    				try {
-    					if (statement!=null) statement.close();
-    				} catch (SQLException e) {
-    					System.out.println("Cannot close Statement. Machine error: "+e.toString());
-    					return false;
-    				}
-    				return true;
-    			}
-    			else {
-    				friends_2 = getFriends(friends_1.get(i));
-        			//second level
-    				for(int j=0; j<friends_2.size(); j++) {
-    					currPath2 = " --> User "+friends_2.get(j);
-    	    			if(friends_2.get(j) == userId_B) {
-    	    				System.out.println("Path found! (2 hops)");
-    	    				System.out.println(pathStart+currPath1+currPath2);
-    	    				try {
-    	    					if (statement!=null) statement.close();
-    	    				} catch (SQLException e) {
-    	    					System.out.println("Cannot close Statement. Machine error: "+e.toString());
-    	    					return false;
-    	    				}
-    	    				return true;
-    	    			}
-    	    			else {
-    	    				friends_3 = getFriends(friends_2.get(j));
-    	        			//third level
-    	    				for(int k=0; k<friends_3.size(); k++) {
-    	    					currPath3 = " --> User "+friends_3.get(k);
-    	    	    			if(friends_3.get(k) == userId_B) {
-    	    	    				System.out.println("Path found! (3 hops)");
-    	    	    				System.out.println(pathStart+currPath1+currPath2+currPath3);
-    	    	    				try {
-    	    	    					if (statement!=null) statement.close();
-    	    	    				} catch (SQLException e) {
-    	    	    					System.out.println("Cannot close Statement. Machine error: "+e.toString());
-    	    	    					return false;
-    	    	    				}
-    	    	    				return true;
-    	    	    			}
-    	        			}
-    	    			}
-        			}
-    			}
-    		}
-    		System.out.printf("No path found...");
-	    }
-		catch(Exception Ex)  
-		{
-			System.out.println("Machine Error: " +
-					   Ex.toString());
-			return false;
-		}
-		finally{
-			try {
-				if (statement!=null) statement.close();
-			} catch (SQLException e) {
-				System.out.println("Cannot close Statement. Machine error: "+e.toString());
-				return false;
+		String pathStart="Start: User "+userId_A,currPath1,currPath2,currPath3;
+		ArrayList<Integer> friends_1,friends_2,friends_3;
+		
+		friends_1 = getFriends(userId_A);
+		//first level
+		for(int i=0; i<friends_1.size(); i++) {
+			currPath1 = " --> User "+friends_1.get(i);
+			if(friends_1.get(i) == userId_B) {
+				System.out.println("Path found! (1 hop)");
+				System.out.println(pathStart+currPath1);
+				try {
+					if (statement!=null) statement.close();
+				} catch (SQLException e) {
+					System.out.println("Cannot close Statement. Machine error: "+e.toString());
+					return false;
+				}
+				return true;
 			}
-		}	
+			else {
+				friends_2 = getFriends(friends_1.get(i));
+    			//second level
+				for(int j=0; j<friends_2.size(); j++) {
+					currPath2 = " --> User "+friends_2.get(j);
+	    			if(friends_2.get(j) == userId_B) {
+	    				System.out.println("Path found! (2 hops)");
+	    				System.out.println(pathStart+currPath1+currPath2);
+	    				try {
+	    					if (statement!=null) statement.close();
+	    				} catch (SQLException e) {
+	    					System.out.println("Cannot close Statement. Machine error: "+e.toString());
+	    					return false;
+	    				}
+	    				return true;
+	    			}
+	    			else {
+	    				friends_3 = getFriends(friends_2.get(j));
+	        			//third level
+	    				for(int k=0; k<friends_3.size(); k++) {
+	    					currPath3 = " --> User "+friends_3.get(k);
+	    	    			if(friends_3.get(k) == userId_B) {
+	    	    				System.out.println("Path found! (3 hops)");
+	    	    				System.out.println(pathStart+currPath1+currPath2+currPath3);
+	    	    				try {
+	    	    					if (statement!=null) statement.close();
+	    	    				} catch (SQLException e) {
+	    	    					System.out.println("Cannot close Statement. Machine error: "+e.toString());
+	    	    					return false;
+	    	    				}
+	    	    				return true;
+	    	    			}
+	        			}
+	    			}
+    			}
+			}
+		}
+		System.out.printf("No path found...");
     	return true;
     }
     
@@ -678,10 +672,9 @@ public class FaceSpace {
 				friends.add(friendId);
 		    }
 	    }
-		catch(Exception Ex)  
+		catch(SQLException Ex)  
 		{
-			System.out.println("Machine Error: " +
-					   Ex.toString());
+			printSQLException(Ex);
 			return null;
 		}
 		finally{
@@ -791,7 +784,8 @@ public class FaceSpace {
     	return choice;
     }
     
-    private int lookupUser() {
+    /*
+    private static int lookupUser() {
     	Scanner inScan=new Scanner(System.in);
     	int userId = -1;
     	System.out.println("Lookup user by email or name? (E/N)");
@@ -811,7 +805,7 @@ public class FaceSpace {
     	return userId;
     }
     
-    private int lookupByEmail(String email) {
+    private static int lookupByEmail(String email) {
     	Scanner inScan = new Scanner(System.in);
     	int userId = -1;
     	try {
@@ -820,7 +814,7 @@ public class FaceSpace {
 			dbconn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED); //which is the default
 			statement = dbconn.createStatement();
 			
-		    query = "SELECT userId,fname,lname,email "
+		    query = "SELECT userId, fname, lname, email "
 		    		+"FROM Profiles "
 		    		+"WHERE email=?";
 		    prepStatement = dbconn.prepareStatement(query);
@@ -832,6 +826,7 @@ public class FaceSpace {
 				count++;
 		    }
 			if(count == 0) {
+				System.out.println(count);
 				return -1;
 			}
 			else if(count == 1) {
@@ -866,7 +861,7 @@ public class FaceSpace {
     	return -1;
     }
     
-    private int lookupByName(String fname, String lname) {
+    private static int lookupByName(String fname, String lname) {
     	Scanner inScan = new Scanner(System.in);
     	int userId = -1;
     	try {
@@ -922,6 +917,7 @@ public class FaceSpace {
     	
     	return -1;
     }
+    */
     
     //these bottom two methods were taken from oracle java docs and are used to easily print out any sql exceptions
     //https://docs.oracle.com/javase/tutorial/jdbc/basics/sqlexception.html
@@ -987,6 +983,8 @@ public class FaceSpace {
 		    //TranDemo1 demo = new TranDemo1(Integer.parseInt(args[0]));
 		    
 		    System.out.println("Connection to database successful.");
+		    
+		    //System.out.println("User Id: "+lookupUser());
 		    
 		    int choice = showMenu();
 		    
