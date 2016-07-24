@@ -536,18 +536,18 @@ public class FaceSpace {
 	    	for (int i = 0; i < partials.length; i++){
 	    		System.out.println("All users matching " + partials[i] + ":");
 	    		pstmt = dbconn.prepareStatement(searchQuery);
-	    		pstmt.setString(1, "%" + partials[i] + "%");
-	    		pstmt.setString(2, "%" + partials[i] + "%");
+	    		pstmt.setString(1, "%" + partials[i].toUpperCase() + "%");
+	    		pstmt.setString(2, "%" + partials[i].toUpperCase() + "%");
 	    		rs = pstmt.executeQuery();
 	    		while(rs.next()){
 	    			count++;
-	    			System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getInt(5) + "/" +
-	    					rs.getInt(6) + "/" + rs.getString(7) + " " + rs.getTimestamp(8));
+	    			System.out.println("(" + rs.getInt(1) + ") " + rs.getString(2) + " " + rs.getString(3));
 	    		}
 	    		if(count == 0)
 	    			System.out.println("No results found!");
 	    		else 
 	    			count = 0;
+	    		System.out.println("");
 	    	}
 	    	
 	    	try {
@@ -989,36 +989,41 @@ public class FaceSpace {
 		    	choice = showMenu();
 		    }
 		    
-		    switch(choice){
-			    case 1:
-			    	createUser();
-			    	break;
-			    case 4:
-			    	displayFriends();
-			    	break;
-		    	case 5:
-		    		createGroup();
-		    		break;
-		    	case 6:
-		    		addToGroup();
-		    		break;
-			    case 9:
-			    	displayMessages();
-			    	break;
-			    case 10:
-			    	displayNewMessages();
-			    	break;
-		    	case 11:
-		    		searchForUser();
-		    		break;
-			    case 12:
-			    	threeDegrees();
-			    	break;
-		    	case 14:
-		    		dropUser();
-		    		break;
-			    default:
-			    	break;
+		    while(choice > 0 && choice < 14){
+		    
+			    switch(choice){
+				    case 1:
+				    	createUser();
+				    	break;
+				    case 4:
+				    	displayFriends();
+				    	break;
+			    	case 5:
+			    		createGroup();
+			    		break;
+			    	case 6:
+			    		addToGroup();
+			    		break;
+				    case 9:
+				    	displayMessages();
+				    	break;
+				    case 10:
+				    	displayNewMessages();
+				    	break;
+			    	case 11:
+			    		searchForUser();
+			    		break;
+				    case 12:
+				    	threeDegrees();
+				    	break;
+			    	case 14:
+			    		dropUser();
+			    		break;
+				    default:
+				    	break;
+			    }
+			    choice = showMenu();
+			    System.out.println("");
 		    }
 		}
 		catch(Exception Ex)  {
