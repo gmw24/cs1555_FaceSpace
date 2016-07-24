@@ -113,14 +113,144 @@ public class FaceSpace {
     
     //Jordan
     public static boolean initiateFriendship() {
+    	Scanner nums = new Scanner(System.in);
+    	System.out.println("Please enter your userID:");
+    	int senderID = nums.nextInt();
     	
+    	System.out.println("And the person who you would like to send a request?");
+    	int rID = nums.nextInt();
+    	if(senderID == rID){
+    		System.out.println("Users may not send friend requests to themselves.");
+    		return false;
+    	}
+    	try{
+    		if(!getUser(rID)){
+    			System.out.println("No one in our database has that ID number.");
+    			return false;
+    		}
+    		//checks if this friend relation already exists
+    		if(friends(senderID,rID)){
+    			System.out.println("The users are already friends!");
+    			return false;
+    		}
+    	
+    	
+    		statement = dbconn.createStatement();
+    		String checkPendingRequests = "SELECT dateEstablished FROM Friendships " +
+                 "WHERE receiverId='"+rID+"' AND senderId='"+senderID+"' AND timeEstablished IS NULL";
+    		ResultSet rs= statement.executeQuery(checkPendingRequests);
+
+
+    		if (rs.next()) {// establishes a friendship if a request was already sent from the other user
+             System.out.println("\nThe person with ID"+rID +" already sent you a friend request; establishing friendship now...\n");
+             makeFriends(senderID, rID);
+         	}
+         	else{
+         		Statement stmt = dbconn.createStatement();
+    			int numFriendship = 0;
+    			String query = "SELECT COUNT(*) AS count FROM Friendships";
+    			ResultSet res = stmt.executeQuery(query);
+    			
+    			while(rs.next()){
+    				numFriendship = rs.getInt("count");
+    			}
+    			
+                res = stmt.executeQuery("SELECT * FROM Frienships");
+        	 	String Query = "INSERT INTO Friendships VALUES (?,?,?,?,?)";
+        	 	PreparedStatement pstm= dbconn.prepareStatement(Query);
+        	 	pstm.setInt(1, (numFriendship+1));
+        	 	pstm.setInt(2, senderID);
+        	 	pstm.setInt(3, rID);
+        	 	pstm.setInt(4, 0);
+        	 	pstm.setTimestamp(5,null);
+        	 	pstm.executeUpdate();
+        	 	pstm.close();
+        	 	System.out.println("Friend request sent!");
+         	}        
+         }catch (SQLException e){
+        	 e.printStackTrace();
+        	 System.out.println("ERROR CREATING PENDING FRIEND");
+        	 return false;
+         }
     	return true;
     }
     
     //Jordan
-    public static boolean establishFriendship() {
-    	
+    public static boolean establishFriendship() throws SQLException {
+    	Scanner scan = new Scanner(System.in);
+    	System.out.println("Please enter your userId:");
+    	int userId = scan.nextInt();
+    
+    	try{
+    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); //because counting number groups
+    		System.out.println("Printing pending friendships...");
+    		Statement st = dbconn.createStatement();
+    		String query = "SELECT fname,lname,friendshipId FROM Friendships JOIN Profiles "
+    		+"ON Profiles.userId = Friendships.senderId " +
+    		"WHERE receiverId ='" + userId + "'AND approved = 0";
+    		
+    		prepStatement = dbconn.prepareStatement(query);
+    		resultSet = st.executeQuery(query);
+    		
+    		
+    		System.out.println("First Name           Last Name       fID");
+			System.out.println("--------------------------------------------");
+    		while(resultSet.next()){
+    			System.out.println(resultSet.getString(1)+"           "+resultSet.getString(2)+"       "+resultSet.getInt(3));
+    		}
+    		System.out.println("Please enter the fID of the request you'd\nlike to accept:");
+    		int fID = scan.nextInt();
+    		
+    		fIDCheck(userId,fID);
+    		while(!fIDCheck(userId,fID)){// makes sue the user doesn't enter a bad friendshipID and mess with the wrong data
+    			fID = scan.nextInt();
+    			fIDCheck(userId,fID);
+    			}
+    		
+    		statement = dbconn.createStatement();
+    		String sql ="UPDATE Friendships "+
+    		"SET approved = 1 "+
+    		"WHERE friendshipId = "+fID;
+    		statement.executeUpdate(sql);
+    		
+    		statement = dbconn.createStatement();
+    		query = "UPDATE Friendships "+
+    	    		"SET dateEstablished = TIMESTAMP '"+ java.sql.Timestamp.valueOf(java.time.LocalDateTime.now())+
+    	    		"' WHERE friendshipId = "+ fID;
+    	    //System.out.println(query);
+    		statement.executeUpdate(query);
+    	    
+    	    System.out.println("Friendship established. Send 'em a message!");
+    		
+    	}catch (SQLException e){
+    		System.out.println("Cannot establish friendship");
+    		dbconn.rollback();
+    		e.printStackTrace();
+    		return false;
+    	}
     	return true;
+    }
+    
+    private static boolean fIDCheck(int uID,int fID){
+    	try {
+    		Statement st = dbconn.createStatement();
+    		String query = "SELECT fname,lname,friendshipId FROM Friendships JOIN Profiles "
+    		+"ON Profiles.userId = Friendships.senderId " +
+    		"WHERE receiverId ='" + uID + "'AND approved = 0";
+    		
+    		prepStatement = dbconn.prepareStatement(query);
+    		resultSet = st.executeQuery(query);
+			while(resultSet.next()){
+				if(fID == resultSet.getInt(3)){
+					return true;
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("Check of fID failed. WHAT DID U ENTER??");
+			e.printStackTrace();
+		}
+    	System.out.println("That ID isn't in your friend requests. Please try again.");
+    	return false;
     }
     
     //Mike - injection tested
@@ -355,13 +485,143 @@ public class FaceSpace {
     
     //Jordan
     public static boolean sendMessageToUser() {
-    	
+    	Scanner in = new Scanner(System.in);
+    	System.out.println("Please enter you userId:");
+    	int Id1 = in.nextInt();
+    	System.out.println("Please enter the userId of the person to recieve this message:");
+    	int Id2 = in.nextInt();
+    	try{
+    		if(!getUser(Id2)){
+    			System.out.println("That recipient doesn't exist.");
+    			return false;
+    		}else{
+    			dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); //because counting number groups
+    			//Date date = new Date();
+    			Statement stmt = dbconn.createStatement();
+    			int numMessages = 0;
+    			String query = "SELECT COUNT(*) AS count FROM Messages";
+    			ResultSet rs = stmt.executeQuery(query);
+    			
+    			while(rs.next()){
+    				numMessages = rs.getInt("count");
+    			}
+    			
+    			Scanner text = new Scanner(System.in);
+    			
+    			System.out.println("Message subject:");
+    			String sub = text.nextLine();
+    			
+    			System.out.println("What is the message (Max 140 characters)?");
+    			String mess = text.nextLine();
+    			
+    			query = "INSERT INTO Messages VALUES (?,?,?,?,?,NULL)";
+    			prepStatement = dbconn.prepareStatement(query);
+    			prepStatement.setInt(1, (numMessages+1));
+    			prepStatement.setInt(2, Id1);
+    			prepStatement.setString(3, sub);
+    			prepStatement.setString(4, mess);
+    			prepStatement.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+    			
+    			System.out.println("Sending the message...");
+    			
+    			int sent = prepStatement.executeUpdate();
+    			
+    			query = "INSERT INTO Recipients VALUES (?,?)";
+    			prepStatement = dbconn.prepareStatement(query);
+    			prepStatement.setInt(1, (numMessages+1));
+    			prepStatement.setInt(2, Id2);
+    			
+    			int recieved = prepStatement.executeUpdate();
+    			
+    			if(sent==1 && recieved ==1){
+    				System.out.println("Message Sent.");
+    			}else{
+    				System.out.println("Message not sent");
+    			}
+    			
+    			dbconn.commit();
+    			rs.close();
+    		}
+    		
+    	}catch(SQLException e){
+    		System.out.println("Could not send message.");
+    		e.printStackTrace();
+    		return false;
+    	}
     	return true;
     }
     
     //Jordan
     public static boolean sendMessageToGroup() {
-    	
+    	Scanner sc = new Scanner (System.in);
+    	System.out.println("Plz enter your userId");
+    	int userID = sc.nextInt();
+    	System.out.println("Please enter the Id of the group you wish\nto send a message to");
+    	int groupID = sc.nextInt();
+    	try{
+    		Statement stmt = dbconn.createStatement();
+    		String query = "SELECT * FROM Members WHERE userId = "
+    				+ userID + " AND groupId = " + groupID;
+    		PreparedStatement ps = dbconn.prepareStatement(query);
+    		ResultSet r = ps.executeQuery();
+    		
+    		if(!r.next()){
+    			System.out.println("You cannot send a message to this group.\n Either you aren't a member of it or\n it does not exist.");
+    			return false;
+    		}
+    		
+    		Scanner groupText = new Scanner(System.in);
+    		
+    		System.out.println("What is the subject of the message?");
+    		String subject = groupText.nextLine();
+    		
+    		System.out.println("Message text(140 chars):");
+    		String message = groupText.nextLine();
+    		
+    		String query2 = "SELECT P.userId "
+    		+"FROM (Profiles) P JOIN (Members) M "
+    		+"ON P.userId = M.userId "
+    		+"WHERE M.groupId="+groupID+ " AND P.userId != " + userID;
+    		
+    		ResultSet res = stmt.executeQuery(query2);
+    		
+    		while(res.next()){
+    			Statement stment = dbconn.createStatement();
+    			int numMessages = 0;
+    			String newQuery = "SELECT COUNT(*) AS count FROM Messages";
+    			ResultSet rs = stment.executeQuery(newQuery);
+    			
+    			while(rs.next()){
+    				numMessages = rs.getInt("count");
+    			}
+    			
+    			query = "INSERT INTO Messages VALUES (?,?,?,?,?,NULL)";
+    			prepStatement = dbconn.prepareStatement(query);
+    			prepStatement.setInt(1, (numMessages+1));
+    			prepStatement.setInt(2, userID);
+    			prepStatement.setString(3, subject);
+    			prepStatement.setString(4, message);
+    			prepStatement.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+    			
+    			//System.out.println("Sending the message...");
+    			
+    			int sent = prepStatement.executeUpdate();
+    			
+    			query = "INSERT INTO Recipients VALUES (?,?)";
+    			prepStatement = dbconn.prepareStatement(query);
+    			prepStatement.setInt(1, (numMessages+1));
+    			prepStatement.setInt(2, res.getInt(1));
+    			
+    			int recieved = prepStatement.executeUpdate();
+    			//System.out.println(res.getInt(1));
+    		}
+    		
+    		
+    	}catch(SQLException e){
+    		System.out.println("Error encountered: Cannot send the message.");
+    		e.printStackTrace();
+    		return false;
+    	}
     	return true;
     }
     
@@ -687,7 +947,35 @@ public class FaceSpace {
     
     //Jordan
     public static boolean topMessagers() {
-    	
+    	Scanner cs = new Scanner(System.in);
+    	System.out.println("How many of the top senders would\n you like to see?");
+    	int top = cs.nextInt();
+    	System.out.println("And how many months back would you like to go?");
+    	int months = cs.nextInt();
+    	try {
+			dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			statement = dbconn.createStatement();
+			String query = "SELECT senderId, COUNT(*) "+
+			"FROM Messages JOIN Recipients "+
+			"ON Messages.messageId = Recipients.messageId "+
+			"WHERE Messages.dateSent > "+
+			"(SELECT add_months(current_date,-"+months+") FROM DUAL) "+
+			"GROUP BY senderId "+
+			"ORDER BY COUNT(*) DESC ";
+			//"FETCH FIRST "+top+" ROWS ONLY";
+			
+			resultSet = statement.executeQuery(query);
+			
+			System.out.println("sID:\n-------------------------------");
+			for(int i = 0; i < top; i++){
+				resultSet.next();
+				System.out.println(resultSet.getInt(1));
+			}
+		} catch (SQLException e) {
+			System.out.println("Could not get top messagers for you");
+			e.printStackTrace();
+			return false;
+		}
     	return true;
     }
     
@@ -757,6 +1045,60 @@ public class FaceSpace {
     	
     	return true;
     }    
+    
+  //helper functions for establishing/initializing friends
+  	private static boolean friends(int S, int R){
+  		try{
+  			statement = dbconn.createStatement();
+  			String isFriends = "SELECT timeInitiated FROM Friendships " +
+                      "WHERE (senderId='"+S+"' AND recieverId='"+R+"' AND timeEstablished IS NOT NULL) OR"+
+                      "(senderId='"+R+"' AND recieverId='"+S+"' AND timeEstablished IS NOT NULL)";
+              ResultSet resultSet = statement.executeQuery(isFriends);
+              if(resultSet.next()) return true;
+              else return false;
+  		}catch (SQLException e){
+              e.printStackTrace();
+          }
+  		return false;
+  	}
+  	
+  	public static boolean getUser(int ID){
+  		try{
+  			statement = dbconn.createStatement();
+  			String userSearch = "SELECT fname FROM Profiles WHERE userId = '" +ID+"'";
+  			ResultSet r = statement.executeQuery(userSearch);
+  			if(r.next()){
+  				return true;
+  			}
+  			
+  		}catch (SQLException e){
+  			e.printStackTrace();
+  			System.out.println("Could not check for existence of user.");
+  			return false;
+  		}
+  		return false;
+  	}
+  	
+  	public static boolean makeFriends(int sID, int rID) {
+    	try{
+    		statement = dbconn.createStatement();
+    		String sql ="UPDATE Friendships "+
+    		"SET approved = 1 "+
+    		"WHERE senderId = "+sID +" AND recieverId = "+ rID +" AND approved = 0";
+    		statement.executeUpdate(sql);
+    		
+    		statement = dbconn.createStatement();
+    		String query = "UPDATE Friendships "+
+    	    		"SET dateEstablished = TIMESTAMP '"+ java.sql.Timestamp.valueOf(java.time.LocalDateTime.now())+
+    	    		"' WHERE senderId = "+sID +" AND recieverId = "+ rID +" AND approved = 0";
+    	    //System.out.println(query);
+    		statement.executeUpdate(query);
+    	}catch(SQLException e){
+    		System.out.println("AY. STOP WHAT UR DOING.");
+    		e.printStackTrace();
+    	}
+    	return true;
+    }
 
     public static int showMenu(){
     	Scanner in = new Scanner(System.in);
@@ -960,9 +1302,10 @@ public class FaceSpace {
         return false;
     }
     
+    
 	public static void main(String args[]) throws SQLException{		
-		String username = "gmw24";
-		String password = "3858457";
+		String username = "job96";
+		String password = "3896627";
 		
 		System.out.println("Welcome to facespace");
 
@@ -989,11 +1332,19 @@ public class FaceSpace {
 		    	choice = showMenu();
 		    }
 		    
+
+
 		    while(choice > 0 && choice < 14){
 		    
 			    switch(choice){
 				    case 1:
 				    	createUser();
+				    	break;
+				    case 2:
+				    	initiateFriendship();
+				    	break;
+				    case 3:
+				    	establishFriendship();
 				    	break;
 				    case 4:
 				    	displayFriends();
@@ -1003,6 +1354,12 @@ public class FaceSpace {
 			    		break;
 			    	case 6:
 			    		addToGroup();
+			    		break;
+			    	case 7:
+			    		sendMessageToUser();
+			    		break;
+			    	case 8:
+			    		sendMessageToGroup();
 			    		break;
 				    case 9:
 				    	displayMessages();
@@ -1015,6 +1372,9 @@ public class FaceSpace {
 			    		break;
 				    case 12:
 				    	threeDegrees();
+				    	break;
+				    case 13:
+				    	topMessagers();
 				    	break;
 			    	case 14:
 			    		dropUser();
@@ -1041,5 +1401,7 @@ public class FaceSpace {
 			dbconn.close();
 		}
 	}
+	
+	
 }
 
