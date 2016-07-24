@@ -176,7 +176,6 @@ public class FaceSpace {
     }
     
     private static boolean checkInput(String in){
-    	
     	//common sql injection attack characters that have no business being in input
     	if (in.contains("--") || in.contains(";") || in.contains("=") || in.contains(")")){
     		System.out.println("Error. Your input is suspicious. Please try again");
@@ -193,7 +192,6 @@ public class FaceSpace {
     
     //Gabe
     public static boolean createGroup() {
-    	System.out.println("--Create group--");
     	Scanner in = new Scanner(System.in);
     	try {
     		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); //because counting number groups
@@ -214,8 +212,14 @@ public class FaceSpace {
 			
 			System.out.println("What is the name of your group?");
 			String groupName = in.nextLine();
+			while(!checkInput(groupName)){
+				groupName = in.nextLine();
+			}
 			System.out.println("What is it's description?");
 			String groupDesc = in.nextLine();
+			while(!checkInput(groupDesc)){
+				groupDesc = in.nextLine();
+			}
 			System.out.println("What is the membership limit?");
 			int membership = in.nextInt();
 			
@@ -226,11 +230,10 @@ public class FaceSpace {
 			pstmt.setString(3,groupDesc);
 			pstmt.setInt(4,membership);
 			
-			System.out.println("Executing prepared statement");
 			pstmt.executeUpdate();
 			
 			
-			System.out.println("Insert complete!");
+			System.out.println("Group created!");
 	    	try {
     			if (stmt !=null) stmt.close();
     		} catch (SQLException e) {
@@ -246,7 +249,6 @@ public class FaceSpace {
     //Gabe
     //need to check membership limit of group
     public static boolean addToGroup() {
-    	
     	try {
     		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);//to prevent two users being added at same time, potentially overflowing group membership
 	    	Scanner in = new Scanner(System.in);
@@ -255,18 +257,6 @@ public class FaceSpace {
 	    	int groupId = -1;
 	    	
 	    	Statement stmt = dbconn.createStatement();
-//	    	String qry = "SELECT * FROM Profiles";
-//	    	String qry2 = "SELECT * FROM Groups";
-//	    	ResultSet resSet = stmt.executeQuery(qry);
-//	    	ResultSet resSet2 = stmt.executeQuery(qry2);
-//	    	
-//	    	while(resSet.next()){
-//	    		System.out.println(resSet.getInt(1) + " " + resSet.getString(2) + " " + resSet.getString(3));
-//	    	}
-//	    	
-//	    	while(resSet2.next()){
-//	    		System.out.println(resSet2.getInt(1) + " " + resSet2.getString(2) + " " + resSet2.getString(3));
-//	    	}
 	    	
 	    	String countquery = "SELECT COUNT(*) as cnt FROM Profiles WHERE fname = ? AND lname = ?";
 	    	String query = "SELECT * FROM Profiles WHERE fname = ? AND lname = ?";
@@ -274,10 +264,19 @@ public class FaceSpace {
 	    	
 	    	System.out.println("What is the first name?");
 	    	String fname = in.nextLine();
+	    	while(!checkInput(fname)){
+	    		fname = in.nextLine();
+	    	}
 	    	System.out.println("What is the last name?");
 	    	String lname = in.nextLine();
+	    	while(!checkInput(lname)){
+	    		lname = in.nextLine();
+	    	}
 	    	System.out.println("What group?");
 	    	String group = in.nextLine();
+	    	while(!checkInput(group)){
+	    		group = in.nextLine();
+	    	}
     	
 			PreparedStatement pstmt = dbconn.prepareStatement(query);
 			pstmt.setString(1, fname);
@@ -300,7 +299,6 @@ public class FaceSpace {
 			
 			while(rs2.next()){
 				count = rs2.getInt("cnt");
-				System.out.println(count);
 			}
 			
 			while(rs.next()){
@@ -315,11 +313,8 @@ public class FaceSpace {
 				}
 				userId = rs.getInt(1);
 			}
-			System.out.println(userId);
 			
 			if(groupId == -1 || userId == -1){
-				System.out.println("userId:" + userId);
-				System.out.println("groupId:" + groupId);
 				System.out.println("Error. Either user or group id was not found");
 				return false;
 			}
@@ -332,8 +327,7 @@ public class FaceSpace {
 			
 			finalStatement.executeUpdate();
 			
-			System.out.println("Row added successfully");
-	    	
+			System.out.println("Group membership updated.");
 	    	try {
 			if (stmt !=null) stmt.close();
 		} catch (SQLException e) {
@@ -518,6 +512,9 @@ public class FaceSpace {
 	    	Scanner in = new Scanner(System.in);
 	    	System.out.print("Please enter your search string: ");
 	    	String searchString = in.nextLine();
+	    	while(!checkInput(searchString)){
+	    		searchString = in.nextLine();
+	    	}
 	    	
 	    	String searchQuery = "SELECT * FROM Profiles WHERE UPPER(fname) LIKE ? OR UPPER(lname) LIKE ?";
 	    	
@@ -849,7 +846,6 @@ public class FaceSpace {
 				System.out.println("\nChoose a user (enter the first number on the line)(enter -1 if none): ");
 				return inScan.nextInt();
 			}
-			
 	    }
 		catch(Exception Ex)  
 		{
