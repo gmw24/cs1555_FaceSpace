@@ -13,8 +13,8 @@ public class FaceSpace {
 	//global, static variables
 	private static Connection dbconn;
 	private static Statement statement; //used to create an instance of the connection
-    private PreparedStatement prepStatement; //used to create a prepared statement, that will be later reused
-    private ResultSet resultSet; //used to hold the result of queries
+    private static PreparedStatement prepStatement; //used to create a prepared statement, that will be later reused
+    private static ResultSet resultSet; //used to hold the result of queries
     private String query;  //this will hold the query we are using
     
     //Mike
@@ -24,13 +24,13 @@ public class FaceSpace {
     }
     
     //Jordan
-    public static boolean initiateFriendship() {
+    public static boolean initiateFriendship(int senderID, int rID) {
     	
     	return true;
     }
     
     //Jordan
-    public static boolean establishFriendship() {
+    public static boolean establishFriendship() throws SQLException {
     	
     	return true;
     }
@@ -416,9 +416,10 @@ public class FaceSpace {
         return false;
     }
     
+    
 	public static void main(String args[]) throws SQLException{		
-		String username = "gmw24";
-		String password = "3858457";
+		String username = "job96";
+		String password = "3896627";
 		
 		System.out.println("Welcome to facespace");
 
@@ -444,6 +445,9 @@ public class FaceSpace {
 		    }
 		    
 		    switch(choice){
+		    case 7:
+		    	sendMessageToUser();
+		    	break;
 		    	case 5:
 		    		createGroup();
 		    		break;
@@ -475,5 +479,7 @@ public class FaceSpace {
 			dbconn.close();
 		}
 	}
+	
+	
 }
 
