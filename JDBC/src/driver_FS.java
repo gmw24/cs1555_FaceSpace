@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.Scanner;
 
 
@@ -5,7 +6,7 @@ public class driver_FS {
 	
 		
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		
 		Scanner inScan=new Scanner(System.in);
 		FaceSpace theFS = new FaceSpace();

@@ -12,11 +12,11 @@ import java.util.Scanner;
 public class FaceSpace {
 	
 	//global, static variables
-	private static Connection dbconn;
-	private static Statement statement; //used to create an instance of the connection
-    private static PreparedStatement prepStatement; //used to create a prepared statement, that will be later reused
-    private static ResultSet resultSet; //used to hold the result of queries
-    private static String query;  //this will hold the query we are using
+	private Connection dbconn;
+	private Statement statement; //used to create an instance of the connection
+    private PreparedStatement prepStatement; //used to create a prepared statement, that will be later reused
+    private ResultSet resultSet; //used to hold the result of queries
+    private String query;  //this will hold the query we are using
     
     //Mike - injection checked
     public boolean createUser(String fname, String lname, String email, int dobYear, int dobMonth, int dobDay) {
@@ -1302,7 +1302,7 @@ public class FaceSpace {
     
     //these bottom two methods were taken from oracle java docs and are used to easily print out any sql exceptions
     //https://docs.oracle.com/javase/tutorial/jdbc/basics/sqlexception.html
-    public static void printSQLException(SQLException ex) {
+    public void printSQLException(SQLException ex) {
         for (Throwable e : ex) {
             if (e instanceof SQLException) {
                 if (ignoreSQLException(
@@ -1327,7 +1327,7 @@ public class FaceSpace {
             }
         }
     }
-    public static boolean ignoreSQLException(String sqlState) {
+    public boolean ignoreSQLException(String sqlState) {
 
         if (sqlState == null) {
             System.out.println("The SQL state is not defined!");
@@ -1446,7 +1446,7 @@ public class FaceSpace {
 //		}
 	}
 	
-	public static void closeConnection(){
+	public void closeConnection(){
 		try {
 			dbconn.close();
 		} catch (SQLException e) {
