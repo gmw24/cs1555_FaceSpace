@@ -1302,7 +1302,7 @@ public class FaceSpace {
     
     //these bottom two methods were taken from oracle java docs and are used to easily print out any sql exceptions
     //https://docs.oracle.com/javase/tutorial/jdbc/basics/sqlexception.html
-    public void printSQLException(SQLException ex) {
+    public static void printSQLException(SQLException ex) {
         for (Throwable e : ex) {
             if (e instanceof SQLException) {
                 if (ignoreSQLException(
@@ -1327,7 +1327,7 @@ public class FaceSpace {
             }
         }
     }
-    public boolean ignoreSQLException(String sqlState) {
+    public static boolean ignoreSQLException(String sqlState) {
 
         if (sqlState == null) {
             System.out.println("The SQL state is not defined!");
@@ -1435,14 +1435,22 @@ public class FaceSpace {
 				       Ex.toString());
 		    Ex.printStackTrace();
 		}
-		finally
-		{
-		 	try {
-    			if (statement !=null) statement.close();
-    		} catch (SQLException e) {
-    			System.out.println("Cannot close Statement. Machine error: "+e.toString());
-    		}
+//		finally
+//		{
+//		 	try {
+//    			if (statement !=null) statement.close();
+//    		} catch (SQLException e) {
+//    			System.out.println("Cannot close Statement. Machine error: "+e.toString());
+//    		}
+//			dbconn.close();
+//		}
+	}
+	
+	public static void closeConnection(){
+		try {
 			dbconn.close();
+		} catch (SQLException e) {
+			printSQLException(e);
 		}
 	}
 	
