@@ -15,6 +15,7 @@ BEGIN
 END;
 /
 
+
 --when user is deleted, it removes all their friendships and group memberships, as well as all the messages they have received
 --it also sets the the senderId of all the messages they sent to be null
 --after this is triggered, a check must be done if a message's sender is null and it has no recipients in recipients table. this is done in jdbc

@@ -1,4 +1,4 @@
-import java.sql.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
@@ -17,9 +17,6 @@ public class FaceSpace {
     private static PreparedStatement prepStatement; //used to create a prepared statement, that will be later reused
     private static ResultSet resultSet; //used to hold the result of queries
     private static String query;  //this will hold the query we are using
-    /*private PreparedStatement prepStatement; //used to create a prepared statement, that will be later reused
-    private ResultSet resultSet; //used to hold the result of queries
-    private String query;  //this will hold the query we are using*/
     
     //Mike - injection checked
     public static boolean createUser() {
@@ -1405,3 +1402,4 @@ public class FaceSpace {
 	
 }
 
+>>>>>>> e66bbc7da1a2748223012a84aa7c9fbc34983146
