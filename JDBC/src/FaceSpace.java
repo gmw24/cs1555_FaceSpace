@@ -1435,15 +1435,15 @@ public class FaceSpace {
 				       Ex.toString());
 		    Ex.printStackTrace();
 		}
-		finally
-		{
-		 	try {
-    			if (statement !=null) statement.close();
-    		} catch (SQLException e) {
-    			System.out.println("Cannot close Statement. Machine error: "+e.toString());
-    		}
-			dbconn.close();
-		}
+//		finally
+//		{
+//		 	try {
+//    			if (statement !=null) statement.close();
+//    		} catch (SQLException e) {
+//    			System.out.println("Cannot close Statement. Machine error: "+e.toString());
+//    		}
+//			dbconn.close();
+//		}
 	}
 	
 	public static void closeConnection(){

@@ -46,24 +46,6 @@ public class driver_FS {
 		theFS.displayFriends(1);
 		System.out.print("Done with this part! Press enter to continue:");
 		inScan.next();
-
-		System.out.println("Will now prove initiateFriendship(), establishFriendship(), and displayFriends() work...");
-		System.out.println("Calling displayFriends(1)");
-		theFS.displayFriends(1);
-		System.out.print("Press enter to continue:");
-		inScan.next();
-		System.out.println("Calling initiateFriendship(1,6)");
-		int fNum = theFS.initiateFriendship(1,6);
-		System.out.println("Calling displayFriends(1)");
-		theFS.displayFriends(1);
-		System.out.print("Press enter to continue:");
-		inScan.next();
-		System.out.println("Calling establishFriendship(1,6)");
-		theFS.establishFriendship(6,fNum);
-		System.out.println("Calling displayFriends(1)");
-		theFS.displayFriends(1);
-		System.out.print("Done with this part! Press enter to continue:");
-		inScan.next();
 		
 		System.out.println("Will now prove displayMessages() and displayNewMessages() work...");
 		System.out.println("Calling displayMessages(1)");
@@ -118,11 +100,13 @@ public class driver_FS {
 		inScan.next();
 
 		System.out.println("Proving that sendMessageToUser() works...");
-		theFS.sendMessagetoUser(1,47,"I h8 U","You sold me a bad hairdo");
+		theFS.sendMessageToUser(1,47,"I h8 U","You sold me a bad hairdo");
 		System.out.println("And sendMessageToGroup()...");
 		theFS.sendMessageToGroup(61,5,"We Win","All your base are belong to us");
 		System.out.print("Done with sending messages. Press enter to continue");
 		inScan.next();
+		
+		theFS.closeConnection();
 	}
 
 }
