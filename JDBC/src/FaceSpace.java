@@ -19,7 +19,7 @@ public class FaceSpace {
     private static String query;  //this will hold the query we are using
     
     //Mike - injection checked
-    public static boolean createUser(String fname, String lname, String email, int dobYear, int dobMonth, int dobDay) {
+    public boolean createUser(String fname, String lname, String email, int dobYear, int dobMonth, int dobDay) {
 //    	Scanner inScan=new Scanner(System.in);
 //    	System.out.print("\nEnter the first name: ");
 //    	String fname = inScan.next();
@@ -115,29 +115,29 @@ public class FaceSpace {
     }
     
     //Jordan
-    public static boolean initiateFriendship(int senderID, int rID) {
+    public int initiateFriendship(int senderID, int rID) {
 //    	Scanner nums = new Scanner(System.in);
 //    	System.out.println("Please enter your userID:");
 //    	int senderID = nums.nextInt();
     	
 //    	System.out.println("And the person who you would like to send a request?");
 //    	int rID = nums.nextInt();
+    	int numFriendship = -1;
     	if(senderID == rID){
     		System.out.println("Users may not send friend requests to themselves.");
-    		return false;
+    		return -1;
     	}
     	try{
     		if(!getUser(rID)){
     			System.out.println("No one in our database has that ID number.");
-    			return false;
+    			return -1;
     		}
     		//checks if this friend relation already exists
     		if(friends(senderID,rID)){
     			System.out.println("The users are already friends!");
-    			return false;
+    			return -1;
     		}
-    	
-    	
+    		    	
     		statement = dbconn.createStatement();
     		String checkPendingRequests = "SELECT dateEstablished FROM Friendships " +
                  "WHERE receiverId='"+rID+"' AND senderId='"+senderID+"' AND timeEstablished IS NULL";
@@ -150,12 +150,14 @@ public class FaceSpace {
          	}
          	else{
          		Statement stmt = dbconn.createStatement();
-    			int numFriendship = 0;
-    			String query = "SELECT COUNT(*) AS count FROM Friendships";
+    			
+    			//String query = "SELECT COUNT(*) AS count FROM Friendships";
+    			String query = "SELECT MAX(friendshipId) as maxId "
+    					+ "FROM Profiles";
     			ResultSet res = stmt.executeQuery(query);
     			
-    			while(rs.next()){
-    				numFriendship = rs.getInt("count");
+    			while(res.next()){
+    				numFriendship = res.getInt("maxId");
     			}
     			
                 res = stmt.executeQuery("SELECT * FROM Frienships");
@@ -173,13 +175,13 @@ public class FaceSpace {
          }catch (SQLException e){
         	 e.printStackTrace();
         	 System.out.println("ERROR CREATING PENDING FRIEND");
-        	 return false;
+        	 return -1;
          }
-    	return true;
+    	return numFriendship+1;
     }
     
     //Jordan
-    public static boolean establishFriendship(int userId, int fID) throws SQLException {
+    public boolean establishFriendship(int userId, int fID) throws SQLException {
 //    	Scanner scan = new Scanner(System.in);
 //    	System.out.println("Please enter your userId:");
 //    	int userId = scan.nextInt();
@@ -235,7 +237,7 @@ public class FaceSpace {
     	return true;
     }
     
-    private static boolean fIDCheck(int uID,int fID){
+    private boolean fIDCheck(int uID,int fID){
     	try {
     		Statement st = dbconn.createStatement();
     		String query = "SELECT fname,lname,friendshipId FROM Friendships JOIN Profiles "
@@ -258,7 +260,7 @@ public class FaceSpace {
     }
     
     //Mike - injection tested
-    public static boolean displayFriends(int userId) {
+    public boolean displayFriends(int userId) {
 //    	Scanner inScan=new Scanner(System.in);
 //    	int userId = -1; //initialize this to negative so the while loops run the first time at least
 //    	while(userId < 1) {
@@ -304,6 +306,37 @@ public class FaceSpace {
 		    }
 			
 			System.out.println("\nEnd of Friends!");
+			
+			System.out.println("\nPending Friendsips:");
+			//first get all the friendships with the senderId==input and receiverId is the friend
+			subQueryProfiles = "SELECT userId,fname,lname FROM Profiles";
+			subQueryFriendships = "SELECT senderId,receiverId FROM Friendships WHERE senderId=? AND approved=0";
+		    query = "SELECT P.userId AS UserId,P.fname AS First,P.lname AS Last "
+		    		+"FROM ("+subQueryProfiles+") P JOIN ("+subQueryFriendships+") F "
+		    		+"ON P.userId=F.receiverId";
+		    prepStatement = dbconn.prepareStatement(query);
+		    prepStatement.setInt(1,userId);
+			resultSet = prepStatement.executeQuery();
+			while(resultSet.next()) {
+				name = resultSet.getString("First")+" "+resultSet.getString("Last");
+				friendId = resultSet.getInt("UserId");
+				System.out.println("Id: "+friendId+"\tName: "+name);
+		    }
+			
+			//now get all the friendships with the receiverId==input and senderId is the friend
+			subQueryProfiles = "SELECT userId,fname,lname FROM Profiles";
+			subQueryFriendships = "SELECT senderId,receiverId FROM Friendships WHERE receiverId=? AND approved=0";
+		    query = "SELECT P.userId AS UserId,P.fname AS First,P.lname AS Last "
+		    		+"FROM ("+subQueryProfiles+") P JOIN ("+subQueryFriendships+") F "
+		    		+"ON P.userId=F.senderId";
+		    prepStatement = dbconn.prepareStatement(query);
+		    prepStatement.setInt(1,userId);
+			resultSet = prepStatement.executeQuery();
+			while(resultSet.next()) {
+				name = resultSet.getString("First")+" "+resultSet.getString("Last");
+				friendId = resultSet.getInt("UserId");
+				System.out.println("Id: "+friendId+"\tName: "+name);
+		    }
 	    }
 		catch(SQLException Ex)  
 		{
@@ -321,7 +354,7 @@ public class FaceSpace {
     	return true;
     }
     
-    private static boolean checkInput(String in){
+    private boolean checkInput(String in){
     	//common sql injection attack characters that have no business being in input
     	if (in.contains("--") || in.contains(";") || in.contains("=") || in.contains(")")){
     		System.out.println("Error. Your input is suspicious. Please try again");
@@ -337,7 +370,7 @@ public class FaceSpace {
     }
     
     //Gabe
-    public static boolean createGroup(String groupName, String groupDesc, int membership) {
+    public boolean createGroup(String groupName, String groupDesc, int membership) {
     	Scanner in = new Scanner(System.in);
     	try {
     		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); //because counting number groups
@@ -398,7 +431,7 @@ public class FaceSpace {
     
     //Gabe
     //need to check membership limit of group
-    public static boolean addToGroup(String lname, String fname, String group) {
+    public boolean addToGroup(String lname, String fname, String group) {
     	try {
     		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);//to prevent two users being added at same time, potentially overflowing group membership
 	    	Scanner in = new Scanner(System.in);
@@ -495,7 +528,7 @@ public class FaceSpace {
     }
     
     //Jordan
-    public static boolean sendMessageToUser(int Id1, int Id2, String sub, String mess) {
+    public boolean sendMessageToUser(int Id1, int Id2, String sub, String mess) {
 //    	Scanner in = new Scanner(System.in);
 //    	System.out.println("Please enter you userId:");
 //    	int Id1 = in.nextInt();
@@ -563,7 +596,7 @@ public class FaceSpace {
     }
     
     //Jordan
-    public static boolean sendMessageToGroup(int userID, int groupID, String subject, String message) {
+    public boolean sendMessageToGroup(int userID, int groupID, String subject, String message) {
 //    	Scanner sc = new Scanner (System.in);
 //    	System.out.println("Plz enter your userId");
 //    	int userID = sc.nextInt();
@@ -637,7 +670,7 @@ public class FaceSpace {
     }
     
     //Mike
-    public static boolean displayMessages(int userId) {
+    public boolean displayMessages(int userId) {
 //    	Scanner inScan=new Scanner(System.in);
 //    	int userId = -1; //initialize these to negative so the while loops run the first time at least
 //    	while(userId < 1) {
@@ -700,7 +733,7 @@ public class FaceSpace {
     }
     
     //Mike
-    public static boolean displayNewMessages(int userId) {
+    public boolean displayNewMessages(int userId) {
 //    	Scanner inScan=new Scanner(System.in);
 //    	int userId = -1; //initialize these to negative so the while loops run the first time at least
 //    	while(userId < 1) {
@@ -784,7 +817,7 @@ public class FaceSpace {
     }
     
     //Gabe
-    public static boolean searchForUser(String searchString) {
+    public boolean searchForUser(String searchString) {
     	try {
     		dbconn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
     		Statement stmt = dbconn.createStatement();
@@ -833,7 +866,7 @@ public class FaceSpace {
     }
     
     //Mike
-    public static boolean threeDegrees(int userId_A, int userId_B) {
+    public boolean threeDegrees(int userId_A, int userId_B) {
     	Scanner inScan = new Scanner(System.in);
 //    	int userId_A = -1,userId_B = -1; //initialize these to negative so the while loops run the first time at least
 //    	while(userId_A < 1) {
@@ -903,7 +936,7 @@ public class FaceSpace {
     	return true;
     }
     
-    private static ArrayList<Integer> getFriends(int userId) {
+    private ArrayList<Integer> getFriends(int userId) {
     	ArrayList<Integer> friends = new ArrayList<Integer>();
     	try {
 			dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
@@ -956,7 +989,7 @@ public class FaceSpace {
     }
     
     //Jordan
-    public static boolean topMessagers(int top, int months) {
+    public boolean topMessagers(int top, int months) {
     	Scanner cs = new Scanner(System.in);
 //    	System.out.println("How many of the top senders would\n you like to see?");
 //    	int top = cs.nextInt();
@@ -990,7 +1023,7 @@ public class FaceSpace {
     }
     
     //Gabe
-    public static boolean dropUser(int id) {
+    public boolean dropUser(int id) {
     	
     	try {
     		//serializable because nothing else should occur when dropUser is taking place
@@ -1057,7 +1090,7 @@ public class FaceSpace {
     }    
     
   //helper functions for establishing/initializing friends
-  	private static boolean friends(int S, int R){
+  	private boolean friends(int S, int R){
   		try{
   			statement = dbconn.createStatement();
   			String isFriends = "SELECT timeInitiated FROM Friendships " +
@@ -1072,7 +1105,7 @@ public class FaceSpace {
   		return false;
   	}
   	
-  	public static boolean getUser(int ID){
+  	public boolean getUser(int ID){
   		try{
   			statement = dbconn.createStatement();
   			String userSearch = "SELECT fname FROM Profiles WHERE userId = '" +ID+"'";
@@ -1089,7 +1122,7 @@ public class FaceSpace {
   		return false;
   	}
   	
-  	public static boolean makeFriends(int sID, int rID) {
+  	public boolean makeFriends(int sID, int rID) {
     	try{
     		statement = dbconn.createStatement();
     		String sql ="UPDATE Friendships "+
@@ -1110,7 +1143,7 @@ public class FaceSpace {
     	return true;
     }
 
-    public static int showMenu(){
+    public int showMenu(){
     	Scanner in = new Scanner(System.in);
     	System.out.println("\n--FaceSpace Menu--");
     	System.out.println("1. Create a new user");
@@ -1269,7 +1302,7 @@ public class FaceSpace {
     
     //these bottom two methods were taken from oracle java docs and are used to easily print out any sql exceptions
     //https://docs.oracle.com/javase/tutorial/jdbc/basics/sqlexception.html
-    public static void printSQLException(SQLException ex) {
+    public void printSQLException(SQLException ex) {
         for (Throwable e : ex) {
             if (e instanceof SQLException) {
                 if (ignoreSQLException(
@@ -1294,7 +1327,7 @@ public class FaceSpace {
             }
         }
     }
-    public static boolean ignoreSQLException(String sqlState) {
+    public boolean ignoreSQLException(String sqlState) {
 
         if (sqlState == null) {
             System.out.println("The SQL state is not defined!");
@@ -1313,7 +1346,7 @@ public class FaceSpace {
     }
     
     
-	public static void initConnection() throws SQLException{		
+	public void initConnection() throws SQLException{		
 		String username = "job96";
 		String password = "3896627";
 		
