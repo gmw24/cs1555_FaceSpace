@@ -1347,8 +1347,8 @@ public class FaceSpace {
     
     
 	public void initConnection() throws SQLException{		
-		String username = "job96";
-		String password = "3896627";
+		String username = "gmw24";
+		String password = "3858457";
 		
 		System.out.println("Welcome to facespace");
 		System.out.println("Initiating connection.");
