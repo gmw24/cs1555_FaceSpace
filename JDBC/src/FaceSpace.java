@@ -343,12 +343,14 @@ public class FaceSpace {
     		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); //because counting number groups
 			Statement stmt = dbconn.createStatement();
 			int numGroups = 0;
-			String query = "SELECT COUNT(*) AS count FROM Groups";
+			String query = "SELECT MAX(groupId) AS count FROM Groups";
 			ResultSet rs = stmt.executeQuery(query);
 			
 			while(rs.next()){
 				numGroups = rs.getInt("count");
 			}
+			
+			numGroups++;
 			
             rs = stmt.executeQuery("SELECT * FROM Groups");
 			
