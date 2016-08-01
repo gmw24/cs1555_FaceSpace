@@ -148,9 +148,11 @@ public class FaceSpace {
     			String query = "SELECT MAX(friendshipId) AS count FROM Friendships";
     			ResultSet res = stmt.executeQuery(query);
     			
-    			while(rs.next()){
-    				numFriendship = rs.getInt("count");
+    			while(res.next()){
+    				numFriendship = res.getInt("count");
     			}
+    			
+    			//System.out.println(numFriendship);
     			
                 res = stmt.executeQuery("SELECT * FROM Friendships");
         	 	String Query = "INSERT INTO Friendships VALUES (?,?,?,?,?)";
@@ -1398,15 +1400,15 @@ public class FaceSpace {
     		} catch (SQLException e) {
     			System.out.println("Cannot close Statement. Machine error: "+e.toString());
     		}
-//		finally
-//		{
-//		 	try {
-//    			if (statement !=null) statement.close();
-//    		} catch (SQLException e) {
-//    			System.out.println("Cannot close Statement. Machine error: "+e.toString());
-//    		}
-//			dbconn.close();
-//		}
+		finally
+		{
+		 	try {
+    			if (statement !=null) statement.close();
+    		} catch (SQLException e) {
+    			System.out.println("Cannot close Statement. Machine error: "+e.toString());
+    		}
+			dbconn.close();
+		}
 	}
 }
 }
