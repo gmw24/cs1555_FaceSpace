@@ -2,6 +2,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
+import java.time.*;
 
 /**
  * 
@@ -161,9 +162,11 @@ public class FaceSpace {
     			String query = "SELECT MAX(friendshipId) AS count FROM Friendships";
     			ResultSet res = stmt.executeQuery(query);
     			
-    			while(rs.next()){
-    				numFriendship = rs.getInt("count");
+    			while(res.next()){
+    				numFriendship = res.getInt("count");
     			}
+    			
+    			//System.out.println(numFriendship);
     			
                 res = stmt.executeQuery("SELECT * FROM Friendships");
         	 	String Query = "INSERT INTO Friendships VALUES (?,?,?,?,?)";
