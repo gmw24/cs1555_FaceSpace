@@ -3,7 +3,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
-import java.time.*;
+import java.util.Date;
 
 /**
  * 
@@ -236,9 +236,12 @@ public class FaceSpace {
     		"WHERE friendshipId = "+fID;
     		statement.executeUpdate(sql);
     		
+    		java.util.Date date= new java.util.Date();
+    		Timestamp ts_now = new Timestamp(date.getTime());
+    		
     		statement = dbconn.createStatement();
     		query = "UPDATE Friendships "+
-    	    		"SET dateEstablished = TIMESTAMP '"+ java.sql.Timestamp.valueOf(java.time.LocalDateTime.now())+
+    	    		"SET dateEstablished = TIMESTAMP '"+ ts_now+
     	    		"' WHERE friendshipId = "+ fID;
     	    //System.out.println(query);
     		statement.executeUpdate(query);
@@ -555,13 +558,16 @@ public class FaceSpace {
     			System.out.println("What is the message (Max 140 characters)?");
     			String mess = text.nextLine();
     			
+    			java.util.Date date= new java.util.Date();
+    			Timestamp now = new Timestamp(date.getTime());
+    			
     			query = "INSERT INTO Messages VALUES (?,?,?,?,?,NULL)";
     			prepStatement = dbconn.prepareStatement(query);
     			prepStatement.setInt(1, (numMessages+1));
     			prepStatement.setInt(2, Id1);
     			prepStatement.setString(3, sub);
     			prepStatement.setString(4, mess);
-    			prepStatement.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+    			prepStatement.setTimestamp(5, now);
     			
     			System.out.println("Sending the message...");
     			
@@ -608,11 +614,12 @@ public class FaceSpace {
     	int groupID = sc.nextInt();*/
     	try{
     		//first get the group id
-	    	System.out.println("What group?");
+	    	System.out.println("What is the group name?");
 	    	String group = sc.nextLine();
 	    	while(!checkInput(group)){
 	    		group = sc.nextLine();
 	    	}
+	    	
 	    	//Statement stmt = dbconn.createStatement();
 	    	String groupQuery = "SELECT groupId FROM Groups WHERE name = ?";
 			PreparedStatement pstmt3 = dbconn.prepareStatement(groupQuery);
@@ -631,7 +638,7 @@ public class FaceSpace {
     		ResultSet r = ps.executeQuery();
     		
     		if(!r.next()){
-    			System.out.println("You cannot send a message to this group.\n Either you aren't a member of it or\n it does not exist.");
+    			System.out.println("You cannot send a message to this group.\nEither you aren't a member of it or\nit does not exist.");
     			return false;
     		}
     		
@@ -650,6 +657,9 @@ public class FaceSpace {
     		
     		ResultSet res = stmt.executeQuery(query2);
     		
+    		java.util.Date date= new java.util.Date();
+    		Timestamp now = new Timestamp(date.getTime());
+    		
     		while(res.next()){
     			Statement stment = dbconn.createStatement();
     			int numMessages = 0;
@@ -666,7 +676,7 @@ public class FaceSpace {
     			prepStatement.setInt(2, userID);
     			prepStatement.setString(3, subject);
     			prepStatement.setString(4, message);
-    			prepStatement.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+    			prepStatement.setTimestamp(5, now);
     			
     			//System.out.println("Sending the message...");
     			
@@ -1062,17 +1072,31 @@ public class FaceSpace {
 			
 			resultSet = statement.executeQuery(query);
 			
-			System.out.println("sID:\n-------------------------------");
+			System.out.println("Chatty Boyz:\n-------------------------------");
 			for(int i = 0; i < top; i++){
 				resultSet.next();
-				System.out.println(resultSet.getInt(1));
+				System.out.println(_getNameByID(resultSet.getInt(1)));
 			}
 		} catch (SQLException e) {
 			System.out.println("Could not get top messagers for you");
-			e.printStackTrace();
+			printSQLException(e);
 			return false;
 		}
     	return true;
+    }
+    
+    private static String _getNameByID(int userID){
+    	try {
+			Statement smt = dbconn.createStatement();
+			String name = "SELECT fname, lname FROM Profiles WHERE userId = "+userID;
+			ResultSet rt = smt.executeQuery(name);
+			rt.next();
+			return rt.getString(1) + " " + rt.getString(2);
+		} catch (SQLException e) {
+			System.out.println("NO.");
+			printSQLException(e);
+		}
+    	return "----"; 
     }
     
     //Gabe
@@ -1182,6 +1206,8 @@ public class FaceSpace {
   	}
   	
   	public static boolean makeFriends(int sID, int rID) {
+  		java.util.Date date= new java.util.Date();
+  		Timestamp now = new Timestamp(date.getTime());
     	try{
     		statement = dbconn.createStatement();
     		String sql ="UPDATE Friendships "+
@@ -1191,7 +1217,7 @@ public class FaceSpace {
     		
     		statement = dbconn.createStatement();
     		String query = "UPDATE Friendships "+
-    	    		"SET dateEstablished = TIMESTAMP '"+ java.sql.Timestamp.valueOf(java.time.LocalDateTime.now())+
+    	    		"SET dateEstablished = TIMESTAMP '"+ now+
     	    		"' WHERE senderId = "+sID +" AND recieverId = "+ rID +" AND approved = 0";
     	    //System.out.println(query);
     		statement.executeUpdate(query);
