@@ -506,7 +506,6 @@ public class FaceSpace {
 			//insert into group
 			//if membership limit is reached, the database will throw an error
 			String insertQuery = "INSERT INTO Members VALUES(?, ?)";
-			
 			PreparedStatement finalStatement = dbconn.prepareStatement(insertQuery);
 			finalStatement.setInt(1, groupId);
 			finalStatement.setInt(2, userId);
@@ -1139,7 +1138,6 @@ public class FaceSpace {
 	    			counter++;
 	    		}
 	    		if(counter == 0){
-	    			System.out.println("That message has no recipients, it can be deleted entirely");
 	    			PreparedStatement pstmt3 = dbconn.prepareStatement(deleteQuery);
 	    			pstmt3.setInt(1, msgId);
 	    			pstmt3.executeUpdate();
