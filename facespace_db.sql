@@ -24,7 +24,8 @@ CREATE TABLE Groups
 (	groupId number(10) PRIMARY KEY,
 	name varchar2(32),
 	description varchar2(100),
-	membershipLimit number(10)
+	membershipLimit number(10),
+	CONSTRAINT memLimitNotNeg CHECK (membershipLimit > 0)
 );
 
 --only 1 entry in this table exists for each friendship, so to search for a user's friends one must check for that userId in both the sender and receiver id
