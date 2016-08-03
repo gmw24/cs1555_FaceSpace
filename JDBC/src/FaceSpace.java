@@ -338,9 +338,14 @@ public class FaceSpace {
     public static boolean createGroup() {
     	Scanner in = new Scanner(System.in);
     	try {
-    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); //because counting number groups
+    		//because accessing and updating groups table, need to be serializable
+    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+    		
+    		//create a statement
 			Statement stmt = dbconn.createStatement();
-			int numGroups = 0;
+			int numGroups = -1;
+			
+			//get the maximum id to use for new id
 			String query = "SELECT MAX(groupId) AS count FROM Groups";
 			ResultSet rs = stmt.executeQuery(query);
 			
@@ -348,12 +353,19 @@ public class FaceSpace {
 				numGroups = rs.getInt("count");
 			}
 			
+			if(numGroups == -1){
+				System.out.println("Error with retrieving maximum group id");
+				return false;
+			}
+			
             rs = stmt.executeQuery("SELECT * FROM Groups");
+			System.out.println("Here are all the current groups:");
 			
 			while(rs.next()){
 				System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getInt(4));
 			}
 			
+			//receive new group information
 			System.out.println("What is the name of your group?");
 			String groupName = in.nextLine();
 			while(!checkInput(groupName)){
@@ -391,10 +403,10 @@ public class FaceSpace {
     }
     
     //Gabe
-    //need to check membership limit of group
     public static boolean addToGroup() {
     	try {
-    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);//to prevent two users being added at same time, potentially overflowing group membership
+    		//to prevent two users being added at same time, potentially overflowing group membership
+    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 	    	Scanner in = new Scanner(System.in);
 	    	int userId = -1;
 	    	int count = -1;
@@ -402,10 +414,12 @@ public class FaceSpace {
 	    	
 	    	Statement stmt = dbconn.createStatement();
 	    	
+	    	//various queries needed for this function
 	    	String countquery = "SELECT COUNT(*) as cnt FROM Profiles WHERE fname = ? AND lname = ?";
 	    	String query = "SELECT * FROM Profiles WHERE fname = ? AND lname = ?";
 	    	String groupQuery = "SELECT groupId FROM Groups WHERE name = ?";
 	    	
+	    	//get fname, lname, and group
 	    	System.out.println("What is the first name?");
 	    	String fname = in.nextLine();
 	    	while(!checkInput(fname)){
@@ -437,14 +451,17 @@ public class FaceSpace {
 			ResultSet rs2 = pstmt2.executeQuery();
 			ResultSet rs3 = pstmt3.executeQuery();
 			
+			//get group id
 			while(rs3.next()){
 				groupId = rs3.getInt(1);
 			}
 			
+			//get number of users with fname and lname
 			while(rs2.next()){
 				count = rs2.getInt("cnt");
 			}
 			
+			//get the user id
 			while(rs.next()){
 				if(count == -1){
 					System.out.println("No results recieved");
@@ -463,6 +480,8 @@ public class FaceSpace {
 				return false;
 			}
 			
+			//insert into group
+			//if membership limit is reached, the database will throw an error
 			String insertQuery = "INSERT INTO Members VALUES(?, ?)";
 			
 			PreparedStatement finalStatement = dbconn.prepareStatement(insertQuery);
