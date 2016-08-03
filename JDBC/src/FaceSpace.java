@@ -23,6 +23,7 @@ public class FaceSpace {
     //Mike - injection checked
     public static boolean createUser() {
     	Scanner inScan=new Scanner(System.in);
+    	//first get all the required data from the user, ensuring proper input
     	System.out.print("\nEnter the first name: ");
     	String fname = inScan.next();
     	while(!checkInput(fname)) {
@@ -54,15 +55,14 @@ public class FaceSpace {
         	System.out.print("\nEnter the day of birth (numeric): ");
         	dobDay = inScan.nextInt();
     	}
+    	//now connect to the db
  	   	try {
- 	   		//System.out.println("Getting number of rows...");
 			dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
 			dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			statement = dbconn.createStatement();
 			//first count the current number of users
 			query = "SELECT MAX(userId) as maxId "
 					+ "FROM Profiles";
-			//query += " FROM Profiles";
 			resultSet = statement.executeQuery(query);
 		    int max=0;
 		    if(resultSet.next()) {
@@ -70,10 +70,10 @@ public class FaceSpace {
 		    }
 		    //System.out.println("Number of rows: "+max);
 		    
-		    //now do the actual insert
+		    //now we have the max id, so do the actual insert
 		    query = "INSERT INTO Profiles VALUES (?,?,?,?,?,?,?,NULL)";
 		    prepStatement = dbconn.prepareStatement(query);
-		    prepStatement.setInt(1,max+1);
+		    prepStatement.setInt(1,max+1); //+1 to increment properly
 		    prepStatement.setString(2,fname);
 		    prepStatement.setString(3,lname);
 		    prepStatement.setString(4,email);
@@ -83,13 +83,12 @@ public class FaceSpace {
 			
 		    System.out.println("Adding user...");
 		    int result = prepStatement.executeUpdate();
-		    //System.out.println("After statement execution");
+		    //now just check the result to ensure success
 		    if (result == 1) 
 		    	System.out.println("Update is successful!");
-		    	//System.out.println("Update is successful, result=" + result);
 		    else 
 		    	System.out.println("No rows were updated");
-		    
+		    //commit, then close
 		    dbconn.commit();
 		    resultSet.close();
 	    }
@@ -237,11 +236,11 @@ public class FaceSpace {
     		statement.executeUpdate(sql);
     		
     		java.util.Date date= new java.util.Date();
-    		Timestamp ts_now = new Timestamp(date.getTime());
+    		Timestamp now = new Timestamp(date.getTime());
     		
     		statement = dbconn.createStatement();
     		query = "UPDATE Friendships "+
-    	    		"SET dateEstablished = TIMESTAMP '"+ ts_now+
+    	    		"SET dateEstablished = TIMESTAMP '"+ now+
     	    		"' WHERE friendshipId = "+ fID;
     	    //System.out.println(query);
     		statement.executeUpdate(query);
@@ -279,12 +278,13 @@ public class FaceSpace {
     	return false;
     }
     
-    //Mike - injection tested
+    //Mike
     public static boolean displayFriends() {
     	Scanner inScan=new Scanner(System.in);
     	
     	System.out.println("Please enter your name or email: ");
-    	int userId = lookupUser(); //initialize this to negative so the while loops run the first time at least
+    	int userId = lookupUser(); //use this to look up by name or email (then you dont need the id)
+    	//ensure proper id was returned
     	if(userId <= 0) {
     		System.out.println("User not found.");
     		return false;
@@ -307,6 +307,7 @@ public class FaceSpace {
 			System.out.println("\nFriends:");
 			int friendId;
 			String name;
+			//now print the results
 			while(resultSet.next()) {
 				name = resultSet.getString("First")+" "+resultSet.getString("Last");
 				friendId = resultSet.getInt("UserId");
@@ -322,12 +323,13 @@ public class FaceSpace {
 		    prepStatement = dbconn.prepareStatement(query);
 		    prepStatement.setInt(1,userId);
 			resultSet = prepStatement.executeQuery();
+			//now print the results
 			while(resultSet.next()) {
 				name = resultSet.getString("First")+" "+resultSet.getString("Last");
 				friendId = resultSet.getInt("UserId");
 				System.out.println("Id: "+friendId+"\tName: "+name);
 		    }
-			
+			//nothing will be printed 
 			System.out.println("\nEnd of Friends!");
 	    }
 		catch(SQLException Ex)  
@@ -365,9 +367,14 @@ public class FaceSpace {
     public static boolean createGroup() {
     	Scanner in = new Scanner(System.in);
     	try {
-    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); //because counting number groups
+    		//because accessing and updating groups table, need to be serializable
+    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+    		
+    		//create a statement
 			Statement stmt = dbconn.createStatement();
-			int numGroups = 0;
+			int numGroups = -1;
+			
+			//get the maximum id to use for new id
 			String query = "SELECT MAX(groupId) AS count FROM Groups";
 			ResultSet rs = stmt.executeQuery(query);
 			
@@ -375,12 +382,19 @@ public class FaceSpace {
 				numGroups = rs.getInt("count");
 			}
 			
+			if(numGroups == -1){
+				System.out.println("Error with retrieving maximum group id");
+				return false;
+			}
+			
             rs = stmt.executeQuery("SELECT * FROM Groups");
+			System.out.println("Here are all the current groups:");
 			
 			while(rs.next()){
 				System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getInt(4));
 			}
 			
+			//receive new group information
 			System.out.println("What is the name of your group?");
 			String groupName = in.nextLine();
 			while(!checkInput(groupName)){
@@ -418,10 +432,10 @@ public class FaceSpace {
     }
     
     //Gabe
-    //need to check membership limit of group
     public static boolean addToGroup() {
     	try {
-    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);//to prevent two users being added at same time, potentially overflowing group membership
+    		//to prevent two users being added at same time, potentially overflowing group membership
+    		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 	    	Scanner in = new Scanner(System.in);
 	    	int userId = -1;
 	    	int count = -1;
@@ -429,10 +443,12 @@ public class FaceSpace {
 	    	
 	    	Statement stmt = dbconn.createStatement();
 	    	
+	    	//various queries needed for this function
 	    	String countquery = "SELECT COUNT(*) as cnt FROM Profiles WHERE fname = ? AND lname = ?";
 	    	String query = "SELECT * FROM Profiles WHERE fname = ? AND lname = ?";
 	    	String groupQuery = "SELECT groupId FROM Groups WHERE name = ?";
 	    	
+	    	//get fname, lname, and group
 	    	System.out.println("What is the first name?");
 	    	String fname = in.nextLine();
 	    	while(!checkInput(fname)){
@@ -464,14 +480,17 @@ public class FaceSpace {
 			ResultSet rs2 = pstmt2.executeQuery();
 			ResultSet rs3 = pstmt3.executeQuery();
 			
+			//get group id
 			while(rs3.next()){
 				groupId = rs3.getInt(1);
 			}
 			
+			//get number of users with fname and lname
 			while(rs2.next()){
 				count = rs2.getInt("cnt");
 			}
 			
+			//get the user id
 			while(rs.next()){
 				if(count == -1){
 					System.out.println("No results recieved");
@@ -490,8 +509,9 @@ public class FaceSpace {
 				return false;
 			}
 			
+			//insert into group
+			//if membership limit is reached, the database will throw an error
 			String insertQuery = "INSERT INTO Members VALUES(?, ?)";
-			
 			PreparedStatement finalStatement = dbconn.prepareStatement(insertQuery);
 			finalStatement.setInt(1, groupId);
 			finalStatement.setInt(2, userId);
@@ -614,12 +634,11 @@ public class FaceSpace {
     	int groupID = sc.nextInt();*/
     	try{
     		//first get the group id
-	    	System.out.println("What is the group name?");
+	    	System.out.println("What group?");
 	    	String group = sc.nextLine();
 	    	while(!checkInput(group)){
 	    		group = sc.nextLine();
 	    	}
-	    	
 	    	//Statement stmt = dbconn.createStatement();
 	    	String groupQuery = "SELECT groupId FROM Groups WHERE name = ?";
 			PreparedStatement pstmt3 = dbconn.prepareStatement(groupQuery);
@@ -638,7 +657,7 @@ public class FaceSpace {
     		ResultSet r = ps.executeQuery();
     		
     		if(!r.next()){
-    			System.out.println("You cannot send a message to this group.\nEither you aren't a member of it or\nit does not exist.");
+    			System.out.println("You cannot send a message to this group.\n Either you aren't a member of it or\n it does not exist.");
     			return false;
     		}
     		
@@ -657,9 +676,6 @@ public class FaceSpace {
     		
     		ResultSet res = stmt.executeQuery(query2);
     		
-    		java.util.Date date= new java.util.Date();
-    		Timestamp now = new Timestamp(date.getTime());
-    		
     		while(res.next()){
     			Statement stment = dbconn.createStatement();
     			int numMessages = 0;
@@ -669,6 +685,9 @@ public class FaceSpace {
     			while(rs.next()){
     				numMessages = rs.getInt("count");
     			}
+    			
+    			java.util.Date date= new java.util.Date();
+    			Timestamp now = new Timestamp(date.getTime());
     			
     			query = "INSERT INTO Messages VALUES (?,?,?,?,?,NULL)";
     			prepStatement = dbconn.prepareStatement(query);
@@ -704,11 +723,7 @@ public class FaceSpace {
     //Mike
     public static boolean displayMessages() {
     	Scanner inScan=new Scanner(System.in);
-    	/*int userId = -1; //initialize these to negative so the while loops run the first time at least
-    	while(userId < 1) {
-    		System.out.print("\nEnter the userId: ");
-    		userId = inScan.nextInt();
-    	}*/
+    	//first use lookupUser to get the userId required
     	System.out.println("Please enter your name or email: ");
     	int userId = lookupUser();
     	if(userId <= 0) {
@@ -722,14 +737,19 @@ public class FaceSpace {
 			statement = dbconn.createStatement();
 			
 			//first get all the friendships with the senderId==input and receiverId is the friend
+			//get users
 			String subQueryProfiles = "SELECT userId,fname,lname FROM Profiles";
+			//get messages
 			String subQueryMessages1 = "SELECT messageId,senderId FROM Messages";
+			//get senders
 			String subQuerySenders = "SELECT M.messageId as messageId,P.fname AS fname,P.lname AS lname "
 					+"FROM ("+subQueryProfiles+") P JOIN ("+subQueryMessages1+") M "
 					+"ON P.userId=M.senderId";
+			//join messages and senders
 			String subQueryMessages2 = "SELECT M.messageId as messageId,M.senderId AS senderId,M.subject AS subject,M.messageText AS messageText,M.dateSent as dateSent,S.fname AS fname,S.lname AS lname "
 					+"FROM Messages M JOIN ("+subQuerySenders+") S "
 					+"ON M.messageId=S.messageId";
+			//get recipients, join the above query with the recipients
 			String subQueryRecipients = "SELECT messageId,userId FROM Recipients WHERE userId=?";
 		    query = "SELECT M.messageId AS mId,M.senderId AS sId,M.subject AS subject,M.messageText AS text,M.dateSent AS dateSent,M.fname AS fname,M.lname AS lname "
 		    		+"FROM ("+subQueryMessages2+") M JOIN ("+subQueryRecipients+") R "
@@ -741,6 +761,7 @@ public class FaceSpace {
 			int messageId,senderId,groupId;
 			String subject,text,senderName;
 			Timestamp date;
+			//now get and print the message data
 			while(resultSet.next()) {
 				messageId = resultSet.getInt("mId");
 				senderId = resultSet.getInt("sId");
@@ -774,11 +795,7 @@ public class FaceSpace {
     //Mike
     public static boolean displayNewMessages() {
     	Scanner inScan=new Scanner(System.in);
-    	/*int userId = -1; //initialize these to negative so the while loops run the first time at least
-    	while(userId < 1) {
-    		System.out.print("\nEnter the userId: ");
-    		userId = inScan.nextInt();
-    	}*/
+    	//first get the receiver id of the messages
     	System.out.println("Please enter your name or email: ");
     	int userId = lookupUser();
     	if(userId <= 0) {
@@ -820,6 +837,7 @@ public class FaceSpace {
 		    query = "SELECT M.messageId AS mId,M.senderId AS sId,M.subject AS subject,M.messageText AS text,M.dateSent AS dateSent,M.fname AS fname,M.lname AS lname "
 		    		+"FROM ("+subQueryMessages2+") M JOIN ("+subQueryRecipients+") R "
 		    		+"ON M.messageId=R.messageId";
+		    //here is where we filter by last login time
 		    if(lastLogin != null)
 		    	query += " WHERE dateSent>?";
 		    prepStatement = dbconn.prepareStatement(query);
@@ -831,6 +849,7 @@ public class FaceSpace {
 			int messageId,senderId,groupId;
 			String subject,text,senderName;
 			Timestamp date;
+			//now just print the results
 			while(resultSet.next()) {
 				messageId = resultSet.getInt("mId");
 				senderId = resultSet.getInt("sId");
@@ -913,21 +932,8 @@ public class FaceSpace {
     
     //Mike
     public static boolean threeDegrees() {
+    	//first get the 2 ids of the users that we are looking for a connection between
     	Scanner inScan=new Scanner(System.in);
-    	/*int userId_A = -1,userId_B = -1; //initialize these to negative so the while loops run the first time at least
-    	while(userId_A < 1) {
-    		System.out.print("\nEnter the userId for A: ");
-    		userId_A = inScan.nextInt();
-    	}
-    	while(userId_B < 1) {
-    		System.out.print("\nEnter the userId for B: ");
-    		userId_B = inScan.nextInt();
-    	}*/
-    	/*int userId = -1; //initialize these to negative so the while loops run the first time at least
-    	while(userId < 1) {
-    		System.out.print("\nEnter the userId: ");
-    		userId = inScan.nextInt();
-    	}*/
     	System.out.println("Please enter the name or email of user A: ");
     	int userId_A = lookupUser();
     	if(userId_A <= 0) {
@@ -940,12 +946,16 @@ public class FaceSpace {
     		System.out.println("User B not found.");
     		return false;
     	}
+    	//now begin building the string to output with the results
 		String pathStart="Start: User "+userId_A,currPath1,currPath2,currPath3;
 		ArrayList<Integer> friends_1,friends_2,friends_3;
 		
+		//get all the 1st level friends for user A
 		friends_1 = getFriends(userId_A);
-		//first level
+		//the following utilizes depth first search, so a connection 3 deep may be found before a direct friend connection
+		//first level - loop through all the direct friends first
 		for(int i=0; i<friends_1.size(); i++) {
+			//update the current path
 			currPath1 = " --> User "+friends_1.get(i);
 			if(friends_1.get(i) == userId_B) {
 				System.out.println("Path found! (1 hop)");
@@ -956,11 +966,12 @@ public class FaceSpace {
 					System.out.println("Cannot close Statement. Machine error: "+e.toString());
 					return false;
 				}
+				//return if a path is found
 				return true;
 			}
 			else {
 				friends_2 = getFriends(friends_1.get(i));
-    			//second level
+    			//second level - loop through friends of friends
 				for(int j=0; j<friends_2.size(); j++) {
 					currPath2 = " --> User "+friends_2.get(j);
 	    			if(friends_2.get(j) == userId_B) {
@@ -976,7 +987,7 @@ public class FaceSpace {
 	    			}
 	    			else {
 	    				friends_3 = getFriends(friends_2.get(j));
-	        			//third level
+	        			//third level - loop through friends of friends of friends
 	    				for(int k=0; k<friends_3.size(); k++) {
 	    					currPath3 = " --> User "+friends_3.get(k);
 	    	    			if(friends_3.get(k) == userId_B) {
@@ -995,10 +1006,12 @@ public class FaceSpace {
     			}
 			}
 		}
+		//if not returned by now, all options were checked and nothing was found
 		System.out.printf("No path found...");
     	return true;
     }
     
+    //this function simply gets the friend ids of the userId parameter and returns an arraylist of these ids
     private static ArrayList<Integer> getFriends(int userId) {
     	ArrayList<Integer> friends = new ArrayList<Integer>();
     	try {
@@ -1072,31 +1085,17 @@ public class FaceSpace {
 			
 			resultSet = statement.executeQuery(query);
 			
-			System.out.println("Chatty Boyz:\n-------------------------------");
+			System.out.println("sID:\n-------------------------------");
 			for(int i = 0; i < top; i++){
 				resultSet.next();
-				System.out.println(_getNameByID(resultSet.getInt(1)));
+				System.out.println(resultSet.getInt(1));
 			}
 		} catch (SQLException e) {
 			System.out.println("Could not get top messagers for you");
-			printSQLException(e);
+			e.printStackTrace();
 			return false;
 		}
     	return true;
-    }
-    
-    private static String _getNameByID(int userID){
-    	try {
-			Statement smt = dbconn.createStatement();
-			String name = "SELECT fname, lname FROM Profiles WHERE userId = "+userID;
-			ResultSet rt = smt.executeQuery(name);
-			rt.next();
-			return rt.getString(1) + " " + rt.getString(2);
-		} catch (SQLException e) {
-			System.out.println("NO.");
-			printSQLException(e);
-		}
-    	return "----"; 
     }
     
     //Gabe
@@ -1145,7 +1144,6 @@ public class FaceSpace {
 	    			counter++;
 	    		}
 	    		if(counter == 0){
-	    			System.out.println("That message has no recipients, it can be deleted entirely");
 	    			PreparedStatement pstmt3 = dbconn.prepareStatement(deleteQuery);
 	    			pstmt3.setInt(1, msgId);
 	    			pstmt3.executeUpdate();
@@ -1205,15 +1203,17 @@ public class FaceSpace {
   		return false;
   	}
   	
+  	//establishes friendship between two users. different from establishFriendship b/c it's only used under special circumstances
   	public static boolean makeFriends(int sID, int rID) {
-  		java.util.Date date= new java.util.Date();
-  		Timestamp now = new Timestamp(date.getTime());
     	try{
     		statement = dbconn.createStatement();
     		String sql ="UPDATE Friendships "+
     		"SET approved = 1 "+
     		"WHERE senderId = "+sID +" AND recieverId = "+ rID +" AND approved = 0";
     		statement.executeUpdate(sql);
+    		
+    		java.util.Date date= new java.util.Date();
+    		Timestamp now = new Timestamp(date.getTime());
     		
     		statement = dbconn.createStatement();
     		String query = "UPDATE Friendships "+
