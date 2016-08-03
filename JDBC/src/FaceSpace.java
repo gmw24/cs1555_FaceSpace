@@ -234,9 +234,12 @@ public class FaceSpace {
     		"WHERE friendshipId = "+fID;
     		statement.executeUpdate(sql);
     		
+    		java.util.Date date= new java.util.Date();
+    		Timestamp now = new Timestamp(date.getTime());
+    		
     		statement = dbconn.createStatement();
     		query = "UPDATE Friendships "+
-    	    		"SET dateEstablished = TIMESTAMP '"+ java.sql.Timestamp.valueOf(java.time.LocalDateTime.now())+
+    	    		"SET dateEstablished = TIMESTAMP '"+ now+
     	    		"' WHERE friendshipId = "+ fID;
     	    //System.out.println(query);
     		statement.executeUpdate(query);
@@ -574,13 +577,16 @@ public class FaceSpace {
     			System.out.println("What is the message (Max 140 characters)?");
     			String mess = text.nextLine();
     			
+    			java.util.Date date= new java.util.Date();
+    			Timestamp now = new Timestamp(date.getTime());
+    			
     			query = "INSERT INTO Messages VALUES (?,?,?,?,?,NULL)";
     			prepStatement = dbconn.prepareStatement(query);
     			prepStatement.setInt(1, (numMessages+1));
     			prepStatement.setInt(2, Id1);
     			prepStatement.setString(3, sub);
     			prepStatement.setString(4, mess);
-    			prepStatement.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+    			prepStatement.setTimestamp(5, now);
     			
     			System.out.println("Sending the message...");
     			
@@ -679,13 +685,16 @@ public class FaceSpace {
     				numMessages = rs.getInt("count");
     			}
     			
+    			java.util.Date date= new java.util.Date();
+    			Timestamp now = new Timestamp(date.getTime());
+    			
     			query = "INSERT INTO Messages VALUES (?,?,?,?,?,NULL)";
     			prepStatement = dbconn.prepareStatement(query);
     			prepStatement.setInt(1, (numMessages+1));
     			prepStatement.setInt(2, userID);
     			prepStatement.setString(3, subject);
     			prepStatement.setString(4, message);
-    			prepStatement.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+    			prepStatement.setTimestamp(5, now);
     			
     			//System.out.println("Sending the message...");
     			
@@ -1193,6 +1202,7 @@ public class FaceSpace {
   		return false;
   	}
   	
+  	//establishes friendship between two users. different from establishFriendship b/c it's only used under special circumstances
   	public static boolean makeFriends(int sID, int rID) {
     	try{
     		statement = dbconn.createStatement();
@@ -1201,9 +1211,12 @@ public class FaceSpace {
     		"WHERE senderId = "+sID +" AND recieverId = "+ rID +" AND approved = 0";
     		statement.executeUpdate(sql);
     		
+    		java.util.Date date= new java.util.Date();
+    		Timestamp now = new Timestamp(date.getTime());
+    		
     		statement = dbconn.createStatement();
     		String query = "UPDATE Friendships "+
-    	    		"SET dateEstablished = TIMESTAMP '"+ java.sql.Timestamp.valueOf(java.time.LocalDateTime.now())+
+    	    		"SET dateEstablished = TIMESTAMP '"+ now+
     	    		"' WHERE senderId = "+sID +" AND recieverId = "+ rID +" AND approved = 0";
     	    //System.out.println(query);
     		statement.executeUpdate(query);
@@ -1433,7 +1446,7 @@ public class FaceSpace {
 
 		try{
 		    // Register the oracle driver.  
-		    DriverManager.registerDriver (new oracle.jdbc.driver.OracleDriver());
+		    DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 		    
 		    //This is the location of the database.  This is the database in oracle
 		    //provided to the class
