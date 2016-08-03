@@ -112,11 +112,24 @@ public class FaceSpace {
     //Jordan
     public static boolean initiateFriendship() {
     	Scanner nums = new Scanner(System.in);
-    	System.out.println("Please enter your userID:");
-    	int senderID = nums.nextInt();
     	
-    	System.out.println("And the person who you would like to send a request?");
-    	int rID = nums.nextInt();
+    	/*System.out.println("Please enter your userID: ");
+    	int senderID = nums.nextInt();
+    	System.out.println("And the person who you would like to send a request?: ");
+    	int rID = nums.nextInt();*/
+    	System.out.println("Please enter your name or email: ");
+    	int senderID = lookupUser();
+    	if(senderID <= 0) {
+    		System.out.println("Sender not found.");
+    		return false;
+    	}
+    	System.out.println("And the person who you would like to send a request: ");
+    	int rID = lookupUser();
+    	if(rID <= 0) {
+    		System.out.println("Receiver not found.");
+    		return false;
+    	}
+    	
     	if(senderID == rID){
     		System.out.println("Users may not send friend requests to themselves.");
     		return false;
@@ -179,8 +192,15 @@ public class FaceSpace {
     //Jordan
     public static boolean establishFriendship() throws SQLException {
     	Scanner scan = new Scanner(System.in);
-    	System.out.println("Please enter your userId:");
-    	int userId = scan.nextInt();
+    	//System.out.println("Please enter your userId:");
+    	//int userId = scan.nextInt();
+    	
+    	System.out.println("Please enter your name or email: ");
+    	int userId = lookupUser();
+    	if(userId <= 0) {
+    		System.out.println("User not found.");
+    		return false;
+    	}
     
     	try{
     		dbconn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); //because counting number groups
@@ -258,11 +278,14 @@ public class FaceSpace {
     //Mike - injection tested
     public static boolean displayFriends() {
     	Scanner inScan=new Scanner(System.in);
-    	int userId = -1; //initialize this to negative so the while loops run the first time at least
-    	while(userId < 1) {
-    		System.out.print("\nEnter the userId: ");
-    		userId = inScan.nextInt();
+    	
+    	System.out.println("Please enter your name or email: ");
+    	int userId = lookupUser(); //initialize this to negative so the while loops run the first time at least
+    	if(userId <= 0) {
+    		System.out.println("User not found.");
+    		return false;
     	}
+    	
     	try {
 			dbconn.setAutoCommit(true); //the default is true and every statement executed is considered a transaction.
 			dbconn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED); //which is the default
@@ -508,10 +531,24 @@ public class FaceSpace {
     //Jordan
     public static boolean sendMessageToUser() {
     	Scanner in = new Scanner(System.in);
-    	System.out.println("Please enter you userId:");
+    	
+    	/*System.out.println("Please enter you userId:");
     	int Id1 = in.nextInt();
     	System.out.println("Please enter the userId of the person to recieve this message:");
-    	int Id2 = in.nextInt();
+    	int Id2 = in.nextInt();*/
+    	System.out.println("Please enter your name or email: ");
+    	int Id1 = lookupUser();
+    	if(Id1 <= 0) {
+    		System.out.println("Sender not found.");
+    		return false;
+    	}
+    	System.out.println("And the person who you would like to send a message: ");
+    	int Id2 = lookupUser();
+    	if(Id2 <= 0) {
+    		System.out.println("Receiver not found.");
+    		return false;
+    	}
+    	
     	try{
     		if(!getUser(Id2)){
     			System.out.println("That recipient doesn't exist.");
@@ -574,13 +611,37 @@ public class FaceSpace {
     }
     
     //Jordan
+    //TODO: make this by lookup
     public static boolean sendMessageToGroup() {
     	Scanner sc = new Scanner (System.in);
-    	System.out.println("Plz enter your userId");
-    	int userID = sc.nextInt();
-    	System.out.println("Please enter the Id of the group you wish\nto send a message to");
-    	int groupID = sc.nextInt();
+    	/*System.out.println("Plz enter your userId");
+    	int userID = sc.nextInt();*/
+    	System.out.println("Please enter the name or email of the sender: ");
+    	int userID = lookupUser();
+    	if(userID <= 0) {
+    		System.out.println("User not found.");
+    		return false;
+    	}
+    	/*System.out.println("Please enter the Id of the group you wish\nto send a message to");
+    	int groupID = sc.nextInt();*/
     	try{
+    		//first get the group id
+	    	System.out.println("What group?");
+	    	String group = sc.nextLine();
+	    	while(!checkInput(group)){
+	    		group = sc.nextLine();
+	    	}
+	    	//Statement stmt = dbconn.createStatement();
+	    	String groupQuery = "SELECT groupId FROM Groups WHERE name = ?";
+			PreparedStatement pstmt3 = dbconn.prepareStatement(groupQuery);
+			pstmt3.setString(1, group);
+    		ResultSet rs3 = pstmt3.executeQuery();
+    		int groupID = -1;
+			while(rs3.next()){
+				groupID = rs3.getInt(1);
+			}
+    		
+			
     		Statement stmt = dbconn.createStatement();
     		String query = "SELECT * FROM Members WHERE userId = "
     				+ userID + " AND groupId = " + groupID;
@@ -651,11 +712,18 @@ public class FaceSpace {
     //Mike
     public static boolean displayMessages() {
     	Scanner inScan=new Scanner(System.in);
-    	int userId = -1; //initialize these to negative so the while loops run the first time at least
+    	/*int userId = -1; //initialize these to negative so the while loops run the first time at least
     	while(userId < 1) {
     		System.out.print("\nEnter the userId: ");
     		userId = inScan.nextInt();
+    	}*/
+    	System.out.println("Please enter your name or email: ");
+    	int userId = lookupUser();
+    	if(userId <= 0) {
+    		System.out.println("User not found.");
+    		return false;
     	}
+
     	try {
 			dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
 			dbconn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED); //which is the default
@@ -714,10 +782,16 @@ public class FaceSpace {
     //Mike
     public static boolean displayNewMessages() {
     	Scanner inScan=new Scanner(System.in);
-    	int userId = -1; //initialize these to negative so the while loops run the first time at least
+    	/*int userId = -1; //initialize these to negative so the while loops run the first time at least
     	while(userId < 1) {
     		System.out.print("\nEnter the userId: ");
     		userId = inScan.nextInt();
+    	}*/
+    	System.out.println("Please enter your name or email: ");
+    	int userId = lookupUser();
+    	if(userId <= 0) {
+    		System.out.println("User not found.");
+    		return false;
     	}
     	try {
 			dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
@@ -848,7 +922,7 @@ public class FaceSpace {
     //Mike
     public static boolean threeDegrees() {
     	Scanner inScan=new Scanner(System.in);
-    	int userId_A = -1,userId_B = -1; //initialize these to negative so the while loops run the first time at least
+    	/*int userId_A = -1,userId_B = -1; //initialize these to negative so the while loops run the first time at least
     	while(userId_A < 1) {
     		System.out.print("\nEnter the userId for A: ");
     		userId_A = inScan.nextInt();
@@ -856,6 +930,23 @@ public class FaceSpace {
     	while(userId_B < 1) {
     		System.out.print("\nEnter the userId for B: ");
     		userId_B = inScan.nextInt();
+    	}*/
+    	/*int userId = -1; //initialize these to negative so the while loops run the first time at least
+    	while(userId < 1) {
+    		System.out.print("\nEnter the userId: ");
+    		userId = inScan.nextInt();
+    	}*/
+    	System.out.println("Please enter the name or email of user A: ");
+    	int userId_A = lookupUser();
+    	if(userId_A <= 0) {
+    		System.out.println("User A not found.");
+    		return false;
+    	}
+    	System.out.println("Please enter the name or email of user B: ");
+    	int userId_B = lookupUser();
+    	if(userId_B <= 0) {
+    		System.out.println("User B not found.");
+    		return false;
     	}
 		String pathStart="Start: User "+userId_A,currPath1,currPath2,currPath3;
 		ArrayList<Integer> friends_1,friends_2,friends_3;
@@ -1012,8 +1103,14 @@ public class FaceSpace {
 	    	
 	    	Statement stmt = dbconn.createStatement();
 	    	
-	    	System.out.println("What is userId?");
-	    	int id = in.nextInt();
+	    	/*System.out.println("What is userId?");
+	    	int id = in.nextInt();*/
+	    	System.out.println("Please enter the name or email of the user to drop: ");
+	    	int id = lookupUser();
+	    	if(id <= 0) {
+	    		System.out.println("User not found.");
+	    		return false;
+	    	}
 	    	
 	    	String delQuery = "DELETE FROM Profiles WHERE userId = ?";
 	    	
@@ -1146,21 +1243,20 @@ public class FaceSpace {
     	return choice;
     }
     
-    /*
     private static int lookupUser() {
     	Scanner inScan=new Scanner(System.in);
     	int userId = -1;
     	System.out.println("Lookup user by email or name? (E/N)");
     	String response = inScan.next();
     	if(response.toUpperCase().equals("E")) {
-    		System.out.print("Enter email: ");
+    		System.out.print("Enter exact email: ");
     		String email = inScan.next();
     		userId = lookupByEmail(email);
     	}
     	else {
-    		System.out.print("Enter first name: ");
+    		System.out.print("Enter exact first name: ");
     		String fname = inScan.next();
-    		System.out.print("Enter last name: ");
+    		System.out.print("Enter exact last name: ");
     		String lname = inScan.next();
     		userId = lookupByName(fname,lname);
     	}    	
@@ -1171,8 +1267,9 @@ public class FaceSpace {
     	Scanner inScan = new Scanner(System.in);
     	int userId = -1;
     	try {
+    		PreparedStatement prepStatement2;
     		ResultSet resultSet2;
-			dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
+			//dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
 			dbconn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED); //which is the default
 			statement = dbconn.createStatement();
 			
@@ -1180,20 +1277,24 @@ public class FaceSpace {
 		    		+"FROM Profiles "
 		    		+"WHERE email=?";
 		    prepStatement = dbconn.prepareStatement(query);
+		    prepStatement2 = dbconn.prepareStatement(query);
 		    prepStatement.setString(1,email);
+		    prepStatement2.setString(1,email);
 			resultSet = prepStatement.executeQuery();
-			resultSet2 = prepStatement.executeQuery();
+			resultSet2 = prepStatement2.executeQuery();
 			int count = 0;
 			while(resultSet.next()) {
 				count++;
 		    }
+			System.out.println(count);
 			if(count == 0) {
-				System.out.println(count);
-				return -1;
+				System.out.println("User not found.");
+				userId = -1;
 			}
 			else if(count == 1) {
+				System.out.println("User found!");
 				resultSet2.next();
-				return resultSet2.getInt("userId");
+				userId = resultSet2.getInt("userId");
 			}
 			else {
 				int index = 0;
@@ -1204,7 +1305,7 @@ public class FaceSpace {
 					System.out.println(index+".\t"+resultSet2.getString("fname")+" "+resultSet2.getString("lname")+"\t"+resultSet2.getString("email"));
 				}
 				System.out.println("\nChoose a user (enter the first number on the line)(enter -1 if none): ");
-				return inScan.nextInt();
+				userId = ids.get(inScan.nextInt()-1);
 			}
 	    }
 		catch(Exception Ex)  
@@ -1219,15 +1320,16 @@ public class FaceSpace {
 				System.out.println("Cannot close Statement. Machine error: "+e.toString());
 			}
 		}
-    	return -1;
+    	return userId;
     }
     
     private static int lookupByName(String fname, String lname) {
     	Scanner inScan = new Scanner(System.in);
     	int userId = -1;
     	try {
+    		PreparedStatement prepStatement2;
     		ResultSet resultSet2;
-			dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
+			//dbconn.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
 			dbconn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED); //which is the default
 			statement = dbconn.createStatement();
 			
@@ -1237,18 +1339,23 @@ public class FaceSpace {
 		    prepStatement = dbconn.prepareStatement(query);
 		    prepStatement.setString(1,fname);
 		    prepStatement.setString(2,lname);
+		    prepStatement2 = dbconn.prepareStatement(query);
+		    prepStatement2.setString(1,fname);
+		    prepStatement2.setString(2,lname);
 			resultSet = prepStatement.executeQuery();
-			resultSet2 = prepStatement.executeQuery();
+			resultSet2 = prepStatement2.executeQuery();
 			int count = 0;
 			while(resultSet.next()) {
 				count++;
 		    }
 			if(count == 0) {
-				return -1;
+				System.out.println("User not found.");
+				userId = -1;
 			}
 			else if(count == 1) {
+				System.out.println("User found!");
 				resultSet2.next();
-				return resultSet2.getInt("userId");
+				userId = resultSet2.getInt("userId");
 			}
 			else {
 				int index = 0;
@@ -1258,8 +1365,8 @@ public class FaceSpace {
 					ids.add(resultSet2.getInt("userId"));
 					System.out.println(index+".\t"+resultSet2.getString("fname")+" "+resultSet2.getString("lname")+"\t"+resultSet2.getString("email"));
 				}
-				System.out.println("\nChoose a user (enter the first number on the line)(enter -1 if none): ");
-				return inScan.nextInt();
+				System.out.println("\nChoose a user (enter the first number on the line)(enter 0 if none): ");
+				userId = ids.get(inScan.nextInt()-1);
 			}
 			
 	    }
@@ -1276,9 +1383,8 @@ public class FaceSpace {
 			}
 		}
     	
-    	return -1;
+    	return userId;
     }
-    */
     
     //these bottom two methods were taken from oracle java docs and are used to easily print out any sql exceptions
     //https://docs.oracle.com/javase/tutorial/jdbc/basics/sqlexception.html
@@ -1326,8 +1432,8 @@ public class FaceSpace {
     }
     
 	public static void main(String args[]) throws SQLException{
-		String username = "gmw24";
-		String password = "3858457";
+		String username = "mjm275";
+		String password = "3844041";
 		
 		System.out.println("Welcome to facespace");
 
@@ -1423,7 +1529,7 @@ public class FaceSpace {
 		finally
 		{
 		 	try {
-    			if (statement !=null) statement.close();
+		 		if (statement !=null) statement.close();
     		} catch (SQLException e) {
     			System.out.println("Cannot close Statement. Machine error: "+e.toString());
     		}
