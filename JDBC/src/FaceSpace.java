@@ -74,7 +74,6 @@ public class FaceSpace {
 		    if(resultSet.next()) {
 				max = resultSet.getInt("maxId");
 		    }
-		    //System.out.println("Number of rows: "+max);
 		    
 		    //now we have the max id, so do the actual insert
 		    query = "INSERT INTO Profiles VALUES (?,?,?,?,?,?,?,NULL)";
@@ -119,10 +118,6 @@ public class FaceSpace {
     public static boolean initiateFriendship() {
     	Scanner nums = new Scanner(System.in);
     	
-    	/*System.out.println("Please enter your userID: ");
-    	int senderID = nums.nextInt();
-    	System.out.println("And the person who you would like to send a request?: ");
-    	int rID = nums.nextInt();*/
     	System.out.println("Please enter your name or email: ");
     	int senderID = lookupUser();
     	if(senderID <= 0) {
@@ -198,8 +193,6 @@ public class FaceSpace {
     //Jordan
     public static boolean establishFriendship() throws SQLException {
     	Scanner scan = new Scanner(System.in);
-    	//System.out.println("Please enter your userId:");
-    	//int userId = scan.nextInt();
     	
     	System.out.println("Please enter your name or email: ");
     	int userId = lookupUser();
