@@ -5,10 +5,17 @@ import java.util.Scanner;
 import java.util.Date;
 
 /**
- * 
- * @author Gabriel Wells
  * Main facespace jdbc driver, term project cs 1555
  * Gabriel Wells, Mike McAlpin, Jordan Britton
+ * 
+ * PLEASE NOTE: To ensure database is in a consistent state at the start of testing,
+ * please run the following three sql files in this order:
+ * 1. facespace_db.sql (sets up schemas)
+ * 2. facespace_integrity.sql (sets up triggers and constraints)
+ * 3. facespace_data.sql (populates database)
+ * 
+ * Please do this in the instance of sqlplus which corresponds to the username and password below.
+ * Alternatively, change the username and password to fit yours and run it in your instance of sql plus.
  */
 public class FaceSpace {
 	
@@ -213,10 +220,10 @@ public class FaceSpace {
     		resultSet = st.executeQuery(query);
     		
     		
-    		System.out.println("First Name           Last Name       fID");
+    		System.out.println("First Name\tLast Name\tfID");
 			System.out.println("--------------------------------------------");
     		while(resultSet.next()){
-    			System.out.println(resultSet.getString(1)+"           "+resultSet.getString(2)+"       "+resultSet.getInt(3));
+    			System.out.println(resultSet.getString(1)+"\t"+resultSet.getString(2)+"\t"+resultSet.getInt(3));
     		}
     		System.out.println("Please enter the fID of the request you'd\nlike to accept:");
     		int fID = scan.nextInt();
@@ -394,7 +401,7 @@ public class FaceSpace {
 			}
 			
 			//receive new group information
-			System.out.println("What is the name of your group?");
+			System.out.println("\nWhat is the name of your group?");
 			String groupName = in.nextLine();
 			while(!checkInput(groupName)){
 				groupName = in.nextLine();
@@ -1135,7 +1142,6 @@ public class FaceSpace {
 	    	//if it has no recipients, it is safe to drop that message from db
 	    	while(nullMsgs.next()){
 	    		msgId = nullMsgs.getInt(1);
-	    		System.out.println(msgId);
 	    		PreparedStatement pstmt2 = dbconn.prepareStatement(recipientsQuery);
 	    		pstmt2.setInt(1,  msgId);
 	    		ResultSet rs = pstmt2.executeQuery();
